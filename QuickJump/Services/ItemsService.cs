@@ -21,7 +21,7 @@ namespace QuickJump.Services
 
         public async Task<IEnumerable<Item>> GetAllItems()
         {
-            var results = await Task.WhenAll(itemsProviders.Select(i => i.GetItems()));
+            var results = await Task.WhenAll(itemsProviders.Select(i => i.GetItems()).ToArray());
             return results.SelectMany(f => f);
         }
     }

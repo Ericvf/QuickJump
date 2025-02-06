@@ -5,21 +5,14 @@ using System.Threading.Tasks;
 
 namespace QuickJump.Providers
 {
-    public class GithubSolutionsProvider : IItemsProvider
+    public class FileSystemSolutionsProvider : IItemsProvider
     {
-        public Task<IEnumerable<Item>> GetItems()
+        public async Task<IEnumerable<Item>> GetItems()
         {
-            var allFiles = Directory.GetFiles("f:\\github", "*.sln", SearchOption.AllDirectories);
+            var allFiles = Directory.EnumerateFiles("c:\\git\\rabocop", "*.sln", SearchOption.AllDirectories);
 
             var result = allFiles.Select(f => MapFileToItem(f)).ToList();
-            //result.AddRange(result);
-            //result.AddRange(result);
-            //result.AddRange(result);
-            //result.AddRange(result);
-            //result.AddRange(result);
-            //result.AddRange(result);
-
-            return Task.FromResult(result.AsEnumerable());
+            return result;
         }
 
         private static Item MapFileToItem(string filePath)
@@ -32,8 +25,9 @@ namespace QuickJump.Providers
             {
                 Id = id,
                 Name = fileName,
-                Description = filePath,
-                Type = Item.Types.File,
+                Description = directoryName,
+                Type = Types.File,
+                Category = Categories.Solution,
             };
         }
     }

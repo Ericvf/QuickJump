@@ -31,7 +31,8 @@ namespace QuickJump
             => new ServiceCollection()
                 .AddSingleton<IItemsService, ItemsService>()
                 .AddSingleton<IItemsProvider, StaticItemsProvider>()
-                .AddSingleton<IItemsProvider, GithubSolutionsProvider>()
+                .AddSingleton<IItemsProvider, FileSystemSolutionsProvider>()
+                .AddSingleton<IItemsProvider, AzureManagementProvider>()
                 .AddSingleton<MainViewModel>()
                 .AddSingleton<MainWindow>()
                 .AddSingleton(provider =>

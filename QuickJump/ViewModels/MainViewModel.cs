@@ -7,7 +7,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
+using System.Windows.Threading;
 
 namespace QuickJump.ViewModels
 {
@@ -81,7 +83,8 @@ namespace QuickJump.ViewModels
             while (!cancellationTokenSource.Token.IsCancellationRequested)
             {
                 await LoadData(cancellationTokenSource.Token);
-                UpdateView();
+
+                await Application.Current.Dispatcher.InvokeAsync(() => UpdateView());
 
                 await Task.Delay(1000 * 60 * 60, cancellationTokenSource.Token);
             }
@@ -102,7 +105,7 @@ namespace QuickJump.ViewModels
                 }
                 else
                 {
-                    items.Add(newItem);
+                    await Application.Current.Dispatcher.InvokeAsync(() => items.Add(newItem));
                 }
             }
 
@@ -110,7 +113,7 @@ namespace QuickJump.ViewModels
             {
                 if (!fetchedNames.Contains(items[i].Id))
                 {
-                    items.RemoveAt(i);
+                    await Dispatcher.CurrentDispatcher.InvokeAsync(() => items.RemoveAt(i));
                 }
             }
         }
@@ -136,7 +139,7 @@ namespace QuickJump.ViewModels
             {
                 switch (SelectedItem.Type)
                 {
-                    case Item.Types.File:
+                    case Types.File:
                         Process.Start(
                             new ProcessStartInfo(SelectedItem.Id)
                             {
@@ -145,7 +148,7 @@ namespace QuickJump.ViewModels
                         break;
 
                     default:
-                    case Item.Types.Uri:
+                    case Types.Uri:
                         Process.Start(
                             new ProcessStartInfo(SelectedItem.Path ?? $"http://google.com?q={SelectedItem.Name}")
                             {

@@ -12,10 +12,18 @@
 
         public Types Type { get; set; }
 
-        public enum Types
-        {
-            Uri,
-            File,
-        }
+        public Categories Category { get; set; }
+    }
+
+    public enum Types
+    {
+        Uri,
+        File,
+    }
+
+    public enum Categories
+    {
+        Azure,
+        Solution,
     }
 }

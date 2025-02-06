@@ -150,8 +150,8 @@
                 <RepeatButton Grid.Column="3" Style="{StaticResource ScrollBarLineButton}" Width="18" Command="ScrollBar.LineRightCommand" Content="M 0 0 L 4 4 L 0 8 Z"/>
             </Grid>
         </ControlTemplate>
-        
-        
+
+
         <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
             <Setter Property="SnapsToDevicePixels" Value="True"/>
             <Setter Property="OverridesDefaultStyle" Value="true"/>
@@ -169,9 +169,9 @@
             </Style.Triggers>
         </Style>
 
-       
+
     </Window.Resources>
-    
+
     <Border CornerRadius="5" VerticalAlignment="Top"  BorderBrush="LightGray" BorderThickness="1" Margin="5" x:Name="LayoutRoot" >
         <Border.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -191,31 +191,33 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
+
+
             <Border   BorderThickness="0, 0, 0, 1"
                 Margin="20,10, 20, 0"
                 BorderBrush="LightGray">
 
                 <TextBox Name="SearchTextBox"
-                Grid.Row="0"
-                Height="50"
-                Margin="0,0,0,10"
-                FontSize="28" VerticalContentAlignment="Center"
-                   BorderThickness="0"
-                     Background="Transparent"
-                Text="{Binding FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                PreviewKeyDown="SearchTextBox_PreviewKeyDown"
+                    Grid.Row="0"
+                    Height="50"
+                    Margin="0,0,0,10"
+                    FontSize="28" VerticalContentAlignment="Center"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    Text="{Binding FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    PreviewKeyDown="SearchTextBox_PreviewKeyDown"
                 />
+
             </Border>
-
-
             <ListBox Name="ItemsListBox"
                 Grid.Row="1"
                 ScrollViewer.CanContentScroll="True"
-                     Background="{x:Null}"
+                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                Background="{x:Null}"
                 Visibility="{Binding HasFilteredItems, Converter={StaticResource BoolToVisibilityConverter}}"
-                     Padding="0,0,0,16"
+                Padding="0,0,0,16"
                 Margin="0, 20, 0, 20"
-                     BorderThickness="0"
+                BorderThickness="0"
                 ItemsSource="{Binding FilteredItems}"
                 SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                 SelectionChanged="ItemsListBox_SelectionChanged"
@@ -224,7 +226,22 @@
                 PreviewKeyDown="ItemsListBox_PreviewKeyDown">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}" FontSize="20" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="32"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <Image Source="{Binding Category, Converter={StaticResource CategoryToIconConverter}}"  Grid.RowSpan="2" 
+ VerticalAlignment="Top" />
+                            <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" FontSize="20" Margin="5,0,0,0"/>
+                            <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Description}" FontSize="14" TextWrapping="Wrap" Margin="5,0,0,0"/>
+                        </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
                 <ListBox.ItemContainerStyle>
@@ -244,9 +261,10 @@
                         </Style.Triggers>
                     </Style>
                 </ListBox.ItemContainerStyle>
-              
+
             </ListBox>
 
+            
             <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20"
                    Visibility="{Binding HasFilteredItems, Converter={StaticResource InvertedBoolToVisibilityConverter}}"
                    >No items could be found that match your query, please refine your inputs</TextBlock>

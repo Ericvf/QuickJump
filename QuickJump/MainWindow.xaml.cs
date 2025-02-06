@@ -3,6 +3,7 @@ using QuickJump.ViewModels;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -62,7 +63,7 @@ namespace QuickJump
             hotkeys.Pressed += hotkeys_Pressed;
 
             Dispatcher.BeginInvoke(new Action(() => { SearchTextBox.Focus(); }), System.Windows.Threading.DispatcherPriority.Input);
-            mainViewModel.StartBackgroundFetching();
+            Task.Run(() => mainViewModel.StartBackgroundFetching());
         }
 
         private void hotkeys_Pressed(object sender, PressedEventArgs e)
