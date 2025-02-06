@@ -9,7 +9,7 @@ namespace QuickJump.Providers
     {
         public async Task<IEnumerable<Item>> GetItems()
         {
-            var allFiles = Directory.EnumerateFiles("c:\\git\\rabocop", "*.sln", SearchOption.AllDirectories);
+            var allFiles = Directory.EnumerateFiles("c:\\git\\", "*.sln", SearchOption.AllDirectories);
 
             var result = allFiles.Select(f => MapFileToItem(f)).ToList();
             return result;

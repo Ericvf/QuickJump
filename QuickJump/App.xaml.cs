@@ -1,12 +1,11 @@
-﻿using Hardcodet.Wpf.TaskbarNotification;
+﻿using System;
+using System.Drawing;
+using System.Windows;
+using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.Extensions.DependencyInjection;
 using QuickJump.Providers;
 using QuickJump.Services;
 using QuickJump.ViewModels;
-using System;
-using System.Drawing;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace QuickJump
 {
@@ -20,7 +19,6 @@ namespace QuickJump
             _ = serviceProvider.GetRequiredService<TaskbarIcon>();
 
             var mainViewModel = serviceProvider.GetRequiredService<MainViewModel>();
-
 
             //mainWindow.WindowState = WindowState.Minimized;
             mainWindow.Activate();
