@@ -125,6 +125,11 @@ namespace QuickJump
             }
             else if (e.Key == Key.Enter)
             {
+                if (mainViewModel.FilterText.Equals("exit", StringComparison.OrdinalIgnoreCase))
+                {
+                    Application.Current.Shutdown();
+                }
+
                 mainViewModel.ExecuteItem();
 
                 hotkeys_Pressed(sender, null);
