@@ -107,7 +107,7 @@ namespace QuickJump
             }
         }
 
-        private void SearchTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        private async void SearchTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Down)
             {
@@ -153,12 +153,12 @@ namespace QuickJump
                 }
 
                 hotkeys_Pressed(sender, null);
-                mainViewModel.ExecuteItem();
+                await mainViewModel.ExecuteItem();
                 e.Handled = true;
             }
         }
 
-        private void ItemsListBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        private async void ItemsListBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
             {
@@ -170,7 +170,7 @@ namespace QuickJump
             if (e.Key == Key.Enter)
             {
                 hotkeys_Pressed(sender, null);
-                mainViewModel.ExecuteItem();
+                await mainViewModel.ExecuteItem();
                 e.Handled = true;
 
             }
@@ -188,7 +188,5 @@ namespace QuickJump
                 ItemsListBox.SelectedIndex = 0;
             }
         }
-
-
     }
 }

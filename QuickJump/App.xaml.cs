@@ -40,6 +40,7 @@ namespace QuickJump
                     .AddSingleton<IItemsProvider, ProcessWindowsProvider>()
                     .AddSingleton<MainViewModel>()
                     .AddSingleton<MainWindow>()
+                    .AddSingleton<IItemLauncher, ItemLauncher>()
                     .AddSingleton(provider =>
                        new TaskbarIcon
                        {

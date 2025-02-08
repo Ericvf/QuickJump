@@ -19,6 +19,7 @@ namespace QuickJump.ViewModels
         private readonly CancellationTokenSource cancellationTokenSource = new();
         private readonly ObservableCollection<Item> items;
         private readonly IEnumerable<IItemsProvider> itemsProviders;
+        private readonly IItemLauncher itemLauncher;
 
         public ICollectionView FilteredItems { get; }
 
@@ -110,9 +111,10 @@ namespace QuickJump.ViewModels
             }
         }
 
-        public MainViewModel(IEnumerable<IItemsProvider> itemsProviders)
+        public MainViewModel(IEnumerable<IItemsProvider> itemsProviders, IItemLauncher itemLauncher)
         {
             this.itemsProviders = itemsProviders;
+            this.itemLauncher = itemLauncher;
             items = new ObservableCollection<Item>();
             FilteredItems = CollectionViewSource.GetDefaultView(items);
             FilteredItems.Filter = FilterItems;
@@ -234,35 +236,12 @@ namespace QuickJump.ViewModels
             return false;
         }
 
-        public void ExecuteItem()
+        public async Task ExecuteItem()
         {
             if (SelectedItem != null)
             {
-                switch (SelectedItem.Type)
-                {
-                    case Types.File:
-                        Process.Start(
-                            new ProcessStartInfo(SelectedItem.Id)
-                            {
-                                UseShellExecute = true
-                            });
-                        break;
-                    case Types.ProcessId:
-                        var windowHandle = Convert.ToInt32(SelectedItem.Path);
-                        ShowWindow(windowHandle, SW_RESTORE);
-                        SetForegroundWindow(windowHandle);
-                        break;
-
-                    default:
-                    case Types.Uri:
-                        Process.Start(
-                            new ProcessStartInfo(SelectedItem.Path ?? $"http://google.com?q={SelectedItem.Name}")
-                            {
-                                UseShellExecute = true
-                            });
-                        break;
-
-                }
+                await itemLauncher.LaunchItem(SelectedItem);
+                
             }
         }
 
@@ -271,12 +250,5 @@ namespace QuickJump.ViewModels
             cancellationTokenSource.Cancel();
         }
 
-        private const int SW_RESTORE = 9;
-        [DllImport("user32.dll")]
-        public static extern int SetForegroundWindow(int hwnd);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
     }
 }
