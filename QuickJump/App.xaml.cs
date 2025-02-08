@@ -1,11 +1,11 @@
-﻿using System;
-using System.Drawing;
-using System.IO;
-using System.Windows;
+﻿using DependencyInjection.Extensions.Parameterization;
 using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.Extensions.DependencyInjection;
 using QuickJump.Providers;
 using QuickJump.ViewModels;
+using System;
+using System.Drawing;
+using System.Windows;
 
 namespace QuickJump
 {
@@ -24,21 +24,28 @@ namespace QuickJump
         }
 
 
-    private ServiceProvider BuildServiceProvider()
-            => new ServiceCollection()
-                .AddSingleton<ITokenCredentialProvider, TokenCredentialProvider>()
-                .AddSingleton<IItemsProvider, FileSystemSolutionsProvider>()
-                .AddSingleton<IItemsProvider, AzureManagementProvider>()
-                .AddSingleton<IItemsProvider, AzureDevopsProvider>()
-                .AddSingleton<IItemsProvider, ProcessWindowsProvider>()
-                .AddSingleton<MainViewModel>()
-                .AddSingleton<MainWindow>()
-                .AddSingleton(provider =>
-                   new TaskbarIcon
-                   {
-                       Icon = new Icon(GetResourceStream(new Uri("pack://application:,,,/QuickJump;component/Resources/trayicon.ico")).Stream),
-                       ToolTipText = "QuickJump",
-                   })
-                .BuildServiceProvider();
+        private ServiceProvider BuildServiceProvider()
+                => new ServiceCollection()
+                    .AddSingleton<ITokenCredentialProvider, TokenCredentialProvider>()
+                    .AddSingleton<IItemsProvider, FileSystemSolutionsProvider>(pb => pb
+                        .Value(@"f:\github\")
+                        .Value(@"*.sln")
+                    )
+                    .AddSingleton<IItemsProvider, FileSystemSolutionsProvider>(pb => pb
+                        .Value(@"e:\")
+                        .Value(@"*.mkv")
+                    )
+                    //.AddSingleton<IItemsProvider, AzureManagementProvider>()
+                    //.AddSingleton<IItemsProvider, AzureDevopsProvider>()
+                    .AddSingleton<IItemsProvider, ProcessWindowsProvider>()
+                    .AddSingleton<MainViewModel>()
+                    .AddSingleton<MainWindow>()
+                    .AddSingleton(provider =>
+                       new TaskbarIcon
+                       {
+                           Icon = new Icon(GetResourceStream(new Uri("pack://application:,,,/QuickJump;component/Resources/trayicon.ico")).Stream),
+                           ToolTipText = "QuickJump",
+                       })
+                    .BuildServiceProvider();
     }
 }

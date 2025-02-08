@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuickJump.Providers;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -9,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
-using QuickJump.Providers;
+using System.Windows.Threading;
 
 namespace QuickJump.ViewModels
 {
@@ -144,15 +145,13 @@ namespace QuickJump.ViewModels
             {
                 IsLoading = true;
 
-                try
+                await Task.WhenAll(itemsProviders
+                    .Where(i => !isOnActivate || i.LoadDataOnActivate)
+                    .Select(async itemsProvider =>
                 {
-
-                    await Task.WhenAll(itemsProviders
-                        .Where(i => !isOnActivate || i.LoadDataOnActivate)
-                        .Select(async itemsProvider =>
+                    try
                     {
                         Debug.WriteLine($"Started: {itemsProvider.Name}");
-
                         var stopwatch = Stopwatch.StartNew();
                         var existingItemsMap = items.Where(i => i.Provider == itemsProvider.Name).ToDictionary(i => i.Id);
                         var fetchedNames = new HashSet<string>();
@@ -171,7 +170,7 @@ namespace QuickJump.ViewModels
                                 {
                                     items.Add(item);
                                     UpdateView();
-                                }, System.Windows.Threading.DispatcherPriority.Normal, cancellationTokenSource.Token);
+                                }, DispatcherPriority.Normal, cancellationTokenSource.Token);
                             }
                         }, cancellationTokenSource.Token);
 
@@ -186,20 +185,15 @@ namespace QuickJump.ViewModels
                             }
 
                             UpdateView();
-                        }, System.Windows.Threading.DispatcherPriority.Normal, cancellationTokenSource.Token);
+                        }, DispatcherPriority.Normal, cancellationTokenSource.Token);
 
                         Debug.WriteLine($"Done: {itemsProvider.Name}, {stopwatch.ElapsedMilliseconds}");
-                    }));
-
-                }
-                catch (AggregateException)
-                {
-                    //
-                }
-                catch (TaskCanceledException)
-                {
-                    //
-                }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Exception: {ex?.Message.ToString()}");
+                    }
+                }));
 
                 IsLoading = false;
             }
@@ -240,15 +234,6 @@ namespace QuickJump.ViewModels
             return false;
         }
 
-        [DllImport("user32.dll")]
-        public static extern int SetForegroundWindow(int hwnd);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        private const int SW_RESTORE = 9;
-
         public void ExecuteItem()
         {
             if (SelectedItem != null)
@@ -285,5 +270,13 @@ namespace QuickJump.ViewModels
         {
             cancellationTokenSource.Cancel();
         }
+
+        private const int SW_RESTORE = 9;
+        [DllImport("user32.dll")]
+        public static extern int SetForegroundWindow(int hwnd);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
     }
 }

@@ -7,6 +7,7 @@
 		<PublishSingleFile>true</PublishSingleFile>
 		<SelfContained>false</SelfContained>
 		<PublishReadyToRun>true</PublishReadyToRun>
+		<ApplicationIcon>Resources\icon.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -22,6 +23,7 @@
 	<ItemGroup>
 	  <PackageReference Include="Azure.Identity" Version="1.13.2" />
 	  <PackageReference Include="Azure.ResourceManager" Version="1.13.0" />
+	  <PackageReference Include="DependencyInjection.Extensions.Parameterization" Version="1.0.5" />
 	  <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
 	  <PackageReference Include="Microsoft.Azure.Management.ResourceManager" Version="3.13.1-preview" />
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />

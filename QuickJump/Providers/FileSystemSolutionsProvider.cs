@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -8,14 +9,24 @@ namespace QuickJump.Providers
 {
     public class FileSystemSolutionsProvider : IItemsProvider
     {
+        private readonly string filePath;
+        private readonly string filePattern;
+
         public string Name => nameof(FileSystemSolutionsProvider);
 
         public bool LoadDataOnActivate => false;
 
+        public FileSystemSolutionsProvider(string filePath, string filePattern)
+        {
+            this.filePath = filePath;
+            this.filePattern = filePattern;
+        }
+
         public async Task GetItems(Func<Item, Task> value, CancellationToken cancellationToken)
         {
-            await Task.Delay(1000);
-            var allFiles = Directory.EnumerateFiles("c:\\git\\", "*.sln", SearchOption.AllDirectories);
+            await Task.Delay(0);
+
+            var allFiles = SafeWalk(Directory.EnumerateFiles(filePath, filePattern, SearchOption.AllDirectories));
 
             var result = allFiles.Select(f => MapFileToItem(f)).ToList();
             foreach (var item in result)
@@ -39,6 +50,28 @@ namespace QuickJump.Providers
                 Category = Categories.Solution,
                 Provider = Name,
             };
+        }
+
+        private static IEnumerable<T> SafeWalk<T>(IEnumerable<T> source)
+        {
+            var enumerator = source.GetEnumerator();
+            bool? hasCurrent = null;
+
+            do
+            {
+                try
+                {
+                    hasCurrent = enumerator.MoveNext();
+                }
+                catch
+                {
+                    hasCurrent = null;
+                }
+
+                if (hasCurrent ?? false)
+                    yield return enumerator.Current;
+
+            } while (hasCurrent ?? true);
         }
     }
 }

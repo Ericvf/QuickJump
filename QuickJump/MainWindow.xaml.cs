@@ -145,7 +145,7 @@ namespace QuickJump
                     return;
                 }
 
-                if (ItemsListBox.SelectedItem == null)
+                if (ItemsListBox.SelectedItem == null && ItemsListBox.Items.Count > 0)
                 {
                     ItemsListBox.SelectedIndex = 0;
                     ItemsListBox.ScrollIntoView(ItemsListBox.Items[0]);
