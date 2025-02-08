@@ -13,17 +13,22 @@
         public Types Type { get; set; }
 
         public Categories Category { get; set; }
+
+        public string Provider { get; set; }
     }
 
     public enum Types
     {
         Uri,
         File,
+        ProcessId
     }
 
     public enum Categories
     {
         Azure,
+        AzureDevOps,
         Solution,
+        ProcessWindow
     }
 }

@@ -10,8 +10,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="microsoft-azure.png" />
-	  <None Remove="visual-studio.png" />
+		<Resource Include="Resources\azure-devops.png" />
+		<Resource Include="Resources\icon.ico" />
+		<Resource Include="Resources\microsoft-azure.png" />
+		<Resource Include="Resources\process-icon.png" />
+		<Resource Include="Resources\QuickJump.png" />
+		<Resource Include="Resources\visual-studio.png" />
+		<Resource Include="Resources\trayicon.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -20,22 +25,16 @@
 	  <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
 	  <PackageReference Include="Microsoft.Azure.Management.ResourceManager" Version="3.13.1-preview" />
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
+	  <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="19.225.1" />
 	  <PackageReference Include="System.Drawing.Common" Version="9.0.1" />
+	  <PackageReference Include="System.Management" Version="9.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\AnimationExtensions\AnimationExtensions.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Resource Include="microsoft-azure.png" />
-	  <Resource Include="visual-studio.png" />
-	</ItemGroup>
 
-	<ItemGroup>
-	  <None Update="icon.ico">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
+
 
 </Project>

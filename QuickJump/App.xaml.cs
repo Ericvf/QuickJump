@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Windows;
 using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.Extensions.DependencyInjection;
 using QuickJump.Providers;
-using QuickJump.Services;
 using QuickJump.ViewModels;
 
 namespace QuickJump
@@ -19,24 +19,24 @@ namespace QuickJump
             _ = serviceProvider.GetRequiredService<TaskbarIcon>();
 
             var mainViewModel = serviceProvider.GetRequiredService<MainViewModel>();
-
-            //mainWindow.WindowState = WindowState.Minimized;
             mainWindow.Activate();
             mainWindow.Show();
         }
 
-        private ServiceProvider BuildServiceProvider()
+
+    private ServiceProvider BuildServiceProvider()
             => new ServiceCollection()
-                .AddSingleton<IItemsService, ItemsService>()
-                .AddSingleton<IItemsProvider, StaticItemsProvider>()
+                .AddSingleton<ITokenCredentialProvider, TokenCredentialProvider>()
                 .AddSingleton<IItemsProvider, FileSystemSolutionsProvider>()
                 .AddSingleton<IItemsProvider, AzureManagementProvider>()
+                .AddSingleton<IItemsProvider, AzureDevopsProvider>()
+                .AddSingleton<IItemsProvider, ProcessWindowsProvider>()
                 .AddSingleton<MainViewModel>()
                 .AddSingleton<MainWindow>()
                 .AddSingleton(provider =>
                    new TaskbarIcon
                    {
-                       Icon = new Icon("icon.ico"),
+                       Icon = new Icon(GetResourceStream(new Uri("pack://application:,,,/QuickJump;component/Resources/trayicon.ico")).Stream),
                        ToolTipText = "QuickJump",
                    })
                 .BuildServiceProvider();

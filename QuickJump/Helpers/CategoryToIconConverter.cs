@@ -14,9 +14,13 @@ namespace QuickJump.Helpers
                 switch (category)
                 {
                     case Categories.Azure:
-                        return new BitmapImage(new Uri("pack://application:,,,/QuickJump;component/microsoft-azure.png"));
+                        return new BitmapImage(new Uri("pack://application:,,,/QuickJump;component/Resources/microsoft-azure.png"));
                     case Categories.Solution:
-                        return new BitmapImage(new Uri("pack://application:,,,/QuickJump;component/visual-studio.png"));
+                        return new BitmapImage(new Uri("pack://application:,,,/QuickJump;component/Resources/visual-studio.png"));
+                    case Categories.AzureDevOps:
+                        return new BitmapImage(new Uri("pack://application:,,,/QuickJump;component/Resources/azure-devops.png"));
+                    case Categories.ProcessWindow:
+                        return new BitmapImage(new Uri("pack://application:,,,/QuickJump;component/Resources/process-icon.png"));
                     default:
                         return null;
                 }

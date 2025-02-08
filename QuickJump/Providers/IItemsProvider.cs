@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace QuickJump.Providers
 {
     public interface IItemsProvider
     {
-        Task<IEnumerable<Item>> GetItems();
+        Task GetItems(Func<Item, Task> value, CancellationToken cancellationToken);
+
+        string Name { get; }
+
+        bool LoadDataOnActivate { get; }
     }
 }

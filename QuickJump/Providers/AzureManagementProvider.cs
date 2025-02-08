@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using Azure.Identity;
 using Azure.ResourceManager;
 using Azure.ResourceManager.Resources;
 
@@ -9,40 +9,38 @@ namespace QuickJump.Providers
 {
     public class AzureManagementProvider : IItemsProvider
     {
-        public async Task<IEnumerable<Item>> GetItems()
+        private readonly ArmClient armClient;
+
+        public AzureManagementProvider(ITokenCredentialProvider tokenCredentialProvider)
         {
-            var cacheOptions = new TokenCachePersistenceOptions
-            {
-                Name = "AzureManagementProviderTokenCache",
-                UnsafeAllowUnencryptedStorage = false,
-            };
+            var tokenCredential = tokenCredentialProvider.GetCredential();
+            armClient = new ArmClient(tokenCredential);
+        }
 
-            var credentialOptions = new InteractiveBrowserCredentialOptions
-            {
-                TokenCachePersistenceOptions = cacheOptions
-            };
+        public string Name => nameof(AzureManagementProvider);
 
-            var armClient = new ArmClient(new InteractiveBrowserCredential(credentialOptions));
+        public bool LoadDataOnActivate => false;
 
+        public async Task GetItems(Func<Item, Task> value, CancellationToken cancellationToken)
+        {
             var subscriptions = armClient.GetSubscriptions();
-            var results = new List<Item>();
-
-            foreach (var subscription in subscriptions.Where(s => s.Data.DisplayName.Contains("cfoportal", System.StringComparison.OrdinalIgnoreCase)))
+            foreach (var subscription in subscriptions
+                .Where(s => s.Data.DisplayName.Contains("cfoportal", System.StringComparison.OrdinalIgnoreCase))
+            )
             {
                 foreach (var resourceGroup in subscription.GetResourceGroups())
                 {
-                    foreach (var resource in resourceGroup.GetGenericResources())
+                    await foreach (var resource in resourceGroup.GetGenericResourcesAsync(cancellationToken: cancellationToken))
                     {
                         var item = MapResourceToItem(resource);
-                        results.Add(item);  
+                        await value(item);
+                        cancellationToken.ThrowIfCancellationRequested();
                     }
                 }
             }
-
-            return results.ToArray();
         }
 
-        private static Item MapResourceToItem(GenericResource resource)
+        private Item MapResourceToItem(GenericResource resource)
         {
             return new Item
             {
@@ -52,6 +50,7 @@ namespace QuickJump.Providers
                 Description = resource.Id,
                 Path = $"https://portal.azure.com/#@/resource{resource.Id}",
                 Category = Categories.Azure,
+                Provider = Name,
             };
         }
     }

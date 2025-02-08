@@ -9,7 +9,7 @@
         Focusable="False" Topmost="True" ShowInTaskbar="True" ShowActivated="False"
         WindowStartupLocation="CenterScreen"
         FocusManager.FocusedElement="{Binding ElementName=SearchTextBox}"
-        Title="MainWindow" SizeToContent="Height" Width="800" >
+        Title="MainWindow" SizeToContent="Height" Width="800" Icon="/Resources/icon.ico" >
     <Window.Resources>
         <SolidColorBrush x:Key="StandardBorderBrush" Color="#888" />
         <SolidColorBrush x:Key="StandardBackgroundBrush" Color="Black" />
@@ -209,6 +209,11 @@
                 />
 
             </Border>
+
+               <!--Visibility="{Binding HasFilteredItems, Converter={StaticResource BoolToVisibilityConverter}}"-->
+            <Image Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20" x:Name="logo"
+                Source="/Resources/QuickJump.png" Stretch="None"></Image>
+            
             <ListBox Name="ItemsListBox"
                 Grid.Row="1"
                 ScrollViewer.CanContentScroll="True"
@@ -263,15 +268,21 @@
                 </ListBox.ItemContainerStyle>
 
             </ListBox>
-
             
-            <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20"
-                   Visibility="{Binding HasFilteredItems, Converter={StaticResource InvertedBoolToVisibilityConverter}}"
-                   >No items could be found that match your query, please refine your inputs</TextBlock>
+            <TextBlock Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="20"
+             Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
+             >Loading ...</TextBlock>
 
-            <TextBlock Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="3"
-                       Foreground="White" Text="{Binding HasFilteredItems}"
-              >QuickJump v1.0</TextBlock>
+            <!--<TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20"
+               Visibility="{Binding HasFilteredItems, Converter={StaticResource InvertedBoolToVisibilityConverter}}"
+               >No items could be found that match your query, please refine your inputs</TextBlock>-->
+
+
+            <StackPanel Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="3" Orientation="Horizontal">
+                <TextBlock Foreground="White">QuickJump v1.0</TextBlock>
+                <TextBlock Foreground="Red" Text="{Binding ItemsCount}" />
+                <TextBlock Foreground="Orange" Text="{Binding FilteredItemsCount}" />
+            </StackPanel>
         </Grid>
     </Border>
 

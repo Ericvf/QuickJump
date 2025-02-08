@@ -1,12 +1,11 @@
-﻿using AnimationExtensions;
-using QuickJump.ViewModels;
-using System;
-using System.Diagnostics;
-using System.Linq;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using AnimationExtensions;
+using QuickJump.ViewModels;
 
 namespace QuickJump
 {
@@ -17,7 +16,7 @@ namespace QuickJump
         HotkeyManager hotkeys;
 
         Animation showAnimation, hideAnimation;
-
+        
         private void IsDeactivated()
         {
             isVisiblityToggle = true;
@@ -26,14 +25,23 @@ namespace QuickJump
                 .Fade(0, 100, Eq.OutSine)
                 .ThenDo(d => Hide())
             .Play();
-
         }
 
         private void IsActivated()
         {
             LayoutRoot.Opacity = 0;
+            logo.Opacity = 1;
+
             showAnimation?.Stop();
-            hideAnimation = LayoutRoot.Fade(1, 200, Eq.OutSine).Play();
+            mainViewModel.LoadData(true);
+
+            logo.Move(0, -200).Fade(0)
+                .Fade(0.20, 300, Eq.OutSine)
+                .Move(0, 0, 300, Eq.OutBack).Play();
+
+            hideAnimation = LayoutRoot.Fade(1, 200, Eq.OutSine)
+                .ThenDo(_ => Dispatcher.BeginInvoke(new Action(() => { SearchTextBox.Focus(); }), System.Windows.Threading.DispatcherPriority.Input))
+                .Play();
         }
 
         public MainWindow(MainViewModel mainViewModel)
@@ -45,9 +53,15 @@ namespace QuickJump
             KeyDown += MainWindow_KeyDown;
             this.Activated += (s, e) => this.IsActivated();
             this.Deactivated += (s, e) => this.IsDeactivated();
-
+            Closed += MainWindow_Closed;
             this.mainViewModel = mainViewModel;
             DataContext = mainViewModel;
+        }
+
+        private void MainWindow_Closed(object sender, EventArgs e)
+        {
+            mainViewModel.Cancel();
+            hotkeys.Unregister(0);
         }
 
         private void MainWindow_Deactivated(object sender, EventArgs e)
@@ -93,7 +107,7 @@ namespace QuickJump
             }
         }
 
-        private async void SearchTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void SearchTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Down)
             {
@@ -110,7 +124,6 @@ namespace QuickJump
             }
             else if (e.Key == Key.Up)
             {
-
                 if (ItemsListBox.Items.Count > 0)
                 {
                     ItemsListBox.SelectedIndex = ItemsListBox.Items.Count - 1;
@@ -125,14 +138,22 @@ namespace QuickJump
             }
             else if (e.Key == Key.Enter)
             {
-                if (mainViewModel.FilterText.Equals("exit", StringComparison.OrdinalIgnoreCase))
+                if (mainViewModel.FilterText?.Equals("exit", StringComparison.OrdinalIgnoreCase) == true)
                 {
-                    Application.Current.Shutdown();
+                    Close();
+                    e.Handled = true;
+                    return;
                 }
 
-                mainViewModel.ExecuteItem();
+                if (ItemsListBox.SelectedItem == null)
+                {
+                    ItemsListBox.SelectedIndex = 0;
+                    ItemsListBox.ScrollIntoView(ItemsListBox.Items[0]);
+                    ItemsListBox.UpdateLayout();
+                }
 
                 hotkeys_Pressed(sender, null);
+                mainViewModel.ExecuteItem();
                 e.Handled = true;
             }
         }
@@ -148,9 +169,8 @@ namespace QuickJump
 
             if (e.Key == Key.Enter)
             {
-                mainViewModel.ExecuteItem();
-
                 hotkeys_Pressed(sender, null);
+                mainViewModel.ExecuteItem();
                 e.Handled = true;
 
             }
@@ -168,5 +188,7 @@ namespace QuickJump
                 ItemsListBox.SelectedIndex = 0;
             }
         }
+
+
     }
 }

@@ -1,15 +1,15 @@
-﻿using QuickJump.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Threading;
+using QuickJump.Providers;
 
 namespace QuickJump.ViewModels
 {
@@ -17,9 +17,51 @@ namespace QuickJump.ViewModels
     {
         private readonly CancellationTokenSource cancellationTokenSource = new();
         private readonly ObservableCollection<Item> items;
-        private readonly IItemsService itemsService;
+        private readonly IEnumerable<IItemsProvider> itemsProviders;
 
         public ICollectionView FilteredItems { get; }
+
+        private bool isLoading;
+        public bool IsLoading
+        {
+            get { return isLoading; }
+            set
+            {
+                if (isLoading != value)
+                {
+                    isLoading = value;
+                    OnPropertyChanged(nameof(IsLoading));
+                }
+            }
+        }
+
+        private int itemsCount;
+        public int ItemsCount
+        {
+            get { return itemsCount; }
+            set
+            {
+                if (itemsCount != value)
+                {
+                    itemsCount = value;
+                    OnPropertyChanged(nameof(ItemsCount));
+                }
+            }
+        }
+
+        private int filteredItemsCount;
+        public int FilteredItemsCount
+        {
+            get { return filteredItemsCount; }
+            set
+            {
+                if (filteredItemsCount != value)
+                {
+                    filteredItemsCount = value;
+                    OnPropertyChanged(nameof(FilteredItemsCount));
+                }
+            }
+        }
 
         private bool hasFilteredItems;
         public bool HasFilteredItems
@@ -36,6 +78,8 @@ namespace QuickJump.ViewModels
         }
 
         private string filterText = default;
+        private string[] filterKeywords = new string[0];
+
         public string FilterText
         {
             get => filterText;
@@ -44,6 +88,7 @@ namespace QuickJump.ViewModels
                 if (filterText != value)
                 {
                     filterText = value;
+                    filterKeywords = filterText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                     OnPropertyChanged(nameof(FilterText));
                     UpdateView();
                 }
@@ -64,9 +109,9 @@ namespace QuickJump.ViewModels
             }
         }
 
-        public MainViewModel(IItemsService itemsService)
+        public MainViewModel(IEnumerable<IItemsProvider> itemsProviders)
         {
-            this.itemsService = itemsService;
+            this.itemsProviders = itemsProviders;
             items = new ObservableCollection<Item>();
             FilteredItems = CollectionViewSource.GetDefaultView(items);
             FilteredItems.Filter = FilterItems;
@@ -75,46 +120,88 @@ namespace QuickJump.ViewModels
         public void UpdateView()
         {
             FilteredItems.Refresh();
-            HasFilteredItems = FilteredItems is ListCollectionView l && l.Count > 0;
+            if (FilteredItems is ListCollectionView l)
+            {
+                HasFilteredItems = l.Count > 0;
+                FilteredItemsCount = l.Count;
+                ItemsCount = items.Count;
+            }
         }
 
         public async Task StartBackgroundFetching()
         {
             while (!cancellationTokenSource.Token.IsCancellationRequested)
             {
-                await LoadData(cancellationTokenSource.Token);
+                await LoadData(false);
 
-                await Application.Current.Dispatcher.InvokeAsync(() => UpdateView());
-
-                await Task.Delay(1000 * 60 * 60, cancellationTokenSource.Token);
+                await Task.Delay(1000 * 60 * 15, cancellationTokenSource.Token);
             }
         }
 
-        public async Task LoadData(CancellationToken cancellationToken)
+        public async Task LoadData(bool isOnActivate)
         {
-            var retrievedItems = await itemsService.GetAllItems();
-
-            var existingItemsMap = items.ToDictionary(i => i.Id);
-            var fetchedNames = new HashSet<string>(retrievedItems.Select(f => f.Id));
-
-            foreach (var newItem in retrievedItems)
+            if (!IsLoading)
             {
-                if (existingItemsMap.TryGetValue(newItem.Id, out var existingItem))
-                {
-                    existingItem.Name = newItem.Name;
-                }
-                else
-                {
-                    await Application.Current.Dispatcher.InvokeAsync(() => items.Add(newItem));
-                }
-            }
+                IsLoading = true;
 
-            for (int i = items.Count - 1; i >= 0; i--)
-            {
-                if (!fetchedNames.Contains(items[i].Id))
+                try
                 {
-                    await Dispatcher.CurrentDispatcher.InvokeAsync(() => items.RemoveAt(i));
+
+                    await Task.WhenAll(itemsProviders
+                        .Where(i => !isOnActivate || i.LoadDataOnActivate)
+                        .Select(async itemsProvider =>
+                    {
+                        Debug.WriteLine($"Started: {itemsProvider.Name}");
+
+                        var stopwatch = Stopwatch.StartNew();
+                        var existingItemsMap = items.Where(i => i.Provider == itemsProvider.Name).ToDictionary(i => i.Id);
+                        var fetchedNames = new HashSet<string>();
+
+                        await itemsProvider.GetItems(async item =>
+                        {
+                            fetchedNames.Add(item.Id);
+
+                            if (existingItemsMap.TryGetValue(item.Id, out var existingItem))
+                            {
+                                existingItem.Name = item.Name;
+                            }
+                            else
+                            {
+                                await Application.Current.Dispatcher.InvokeAsync(() =>
+                                {
+                                    items.Add(item);
+                                    UpdateView();
+                                }, System.Windows.Threading.DispatcherPriority.Normal, cancellationTokenSource.Token);
+                            }
+                        }, cancellationTokenSource.Token);
+
+                        await Application.Current.Dispatcher.InvokeAsync(() =>
+                        {
+                            for (int i = existingItemsMap.Keys.Count - 1; i >= 0; i--)
+                            {
+                                if (!fetchedNames.Contains(existingItemsMap[existingItemsMap.Keys.ElementAt(i)].Id))
+                                {
+                                    items.RemoveAt(i);
+                                }
+                            }
+
+                            UpdateView();
+                        }, System.Windows.Threading.DispatcherPriority.Normal, cancellationTokenSource.Token);
+
+                        Debug.WriteLine($"Done: {itemsProvider.Name}, {stopwatch.ElapsedMilliseconds}");
+                    }));
+
                 }
+                catch (AggregateException)
+                {
+                    //
+                }
+                catch (TaskCanceledException)
+                {
+                    //
+                }
+
+                IsLoading = false;
             }
         }
 
@@ -122,16 +209,45 @@ namespace QuickJump.ViewModels
         {
             if (string.IsNullOrEmpty(FilterText))
             {
-                return true;
+                return false;
             }
 
             if (obj is Item item)
             {
-                return item.Name.Contains(FilterText, StringComparison.OrdinalIgnoreCase);
+                var itemField = item.Description ?? item.Name;
+                foreach (var keyword in filterKeywords)
+                {
+                    if (keyword.StartsWith("!"))
+                    {
+                        var negatedKeyword = keyword.Substring(1);
+                        if (negatedKeyword.Length > 0 && itemField.Contains(negatedKeyword, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (!itemField.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
             }
 
             return false;
         }
+
+        [DllImport("user32.dll")]
+        public static extern int SetForegroundWindow(int hwnd);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        private const int SW_RESTORE = 9;
 
         public void ExecuteItem()
         {
@@ -146,6 +262,11 @@ namespace QuickJump.ViewModels
                                 UseShellExecute = true
                             });
                         break;
+                    case Types.ProcessId:
+                        var windowHandle = Convert.ToInt32(SelectedItem.Path);
+                        ShowWindow(windowHandle, SW_RESTORE);
+                        SetForegroundWindow(windowHandle);
+                        break;
 
                     default:
                     case Types.Uri:
@@ -155,8 +276,14 @@ namespace QuickJump.ViewModels
                                 UseShellExecute = true
                             });
                         break;
+
                 }
             }
+        }
+
+        public void Cancel()
+        {
+            cancellationTokenSource.Cancel();
         }
     }
 }

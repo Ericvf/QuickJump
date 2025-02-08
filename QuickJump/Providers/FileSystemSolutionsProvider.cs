@@ -1,21 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace QuickJump.Providers
 {
     public class FileSystemSolutionsProvider : IItemsProvider
     {
-        public async Task<IEnumerable<Item>> GetItems()
+        public string Name => nameof(FileSystemSolutionsProvider);
+
+        public bool LoadDataOnActivate => false;
+
+        public async Task GetItems(Func<Item, Task> value, CancellationToken cancellationToken)
         {
+            await Task.Delay(1000);
             var allFiles = Directory.EnumerateFiles("c:\\git\\", "*.sln", SearchOption.AllDirectories);
 
             var result = allFiles.Select(f => MapFileToItem(f)).ToList();
-            return result;
+            foreach (var item in result)
+            {
+                await value(item);
+            }
         }
 
-        private static Item MapFileToItem(string filePath)
+        private Item MapFileToItem(string filePath)
         {
             var id = filePath;
             var fileName = Path.GetFileName(filePath);
@@ -25,9 +34,10 @@ namespace QuickJump.Providers
             {
                 Id = id,
                 Name = fileName,
-                Description = directoryName,
+                Description = id,
                 Type = Types.File,
                 Category = Categories.Solution,
+                Provider = Name,
             };
         }
     }
