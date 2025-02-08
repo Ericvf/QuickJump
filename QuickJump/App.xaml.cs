@@ -28,15 +28,11 @@ namespace QuickJump
                 => new ServiceCollection()
                     .AddSingleton<ITokenCredentialProvider, TokenCredentialProvider>()
                     .AddSingleton<IItemsProvider, FileSystemSolutionsProvider>(pb => pb
-                        .Value(@"f:\github\")
+                        .Value(@"c:\git\")
                         .Value(@"*.sln")
                     )
-                    .AddSingleton<IItemsProvider, FileSystemSolutionsProvider>(pb => pb
-                        .Value(@"e:\")
-                        .Value(@"*.mkv")
-                    )
-                    //.AddSingleton<IItemsProvider, AzureManagementProvider>()
-                    //.AddSingleton<IItemsProvider, AzureDevopsProvider>()
+                    .AddSingleton<IItemsProvider, AzureManagementProvider>()
+                    .AddSingleton<IItemsProvider, AzureDevopsProvider>()
                     .AddSingleton<IItemsProvider, ProcessWindowsProvider>()
                     .AddSingleton<MainViewModel>()
                     .AddSingleton<MainWindow>()

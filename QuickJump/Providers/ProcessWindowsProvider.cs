@@ -25,7 +25,7 @@ namespace QuickJump.Providers
                         Name = process.MainWindowTitle,
                         Category = Categories.ProcessWindow,
                         Description = $"{process.Id} {process.ProcessName} {process.MainWindowTitle}",
-                        Id = process.Id.ToString(),
+                        Id = process.MainWindowHandle.ToString(),
                         Type = Types.ProcessId,
                         Path = process.MainWindowHandle.ToString()
                     };

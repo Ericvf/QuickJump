@@ -1,16 +1,15 @@
-﻿using QuickJump.Providers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Threading;
+using QuickJump.Providers;
 
 namespace QuickJump.ViewModels
 {
@@ -166,8 +165,9 @@ namespace QuickJump.ViewModels
                     {
                         Debug.WriteLine($"Started: {itemsProvider.Name}");
                         var stopwatch = Stopwatch.StartNew();
-                        var existingItemsMap = items.Where(i => i.Provider == itemsProvider.Name).ToDictionary(i => i.Id);
+                        var existingItemsMap = items.ToArray().Where(i => i.Provider == itemsProvider.Name).ToDictionary(i => i.Id);
                         var fetchedNames = new HashSet<string>();
+                        var addedNames = new HashSet<string>();
 
                         await itemsProvider.GetItems(async item =>
                         {
@@ -179,6 +179,8 @@ namespace QuickJump.ViewModels
                             }
                             else
                             {
+                                addedNames.Add(item.Id);
+
                                 await Application.Current.Dispatcher.InvokeAsync(() =>
                                 {
                                     items.Add(item);
@@ -191,9 +193,10 @@ namespace QuickJump.ViewModels
                         {
                             for (int i = existingItemsMap.Keys.Count - 1; i >= 0; i--)
                             {
-                                if (!fetchedNames.Contains(existingItemsMap[existingItemsMap.Keys.ElementAt(i)].Id))
+                                var existingItem = existingItemsMap[existingItemsMap.Keys.ElementAt(i)];
+                                if (!fetchedNames.Contains(existingItem.Id))
                                 {
-                                    items.RemoveAt(i);
+                                    items.Remove(existingItem);
                                 }
                             }
 
