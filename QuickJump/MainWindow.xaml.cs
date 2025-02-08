@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -36,8 +37,8 @@ namespace QuickJump
             mainViewModel.LoadData(true);
 
             logo.Move(0, -200).Fade(0)
-                .Fade(0.20, 300, Eq.OutSine)
-                .Move(0, 0, 300, Eq.OutBack).Play();
+                .Fade(0.20, 500, Eq.OutSine)
+                .Move(0, 0, 1000, Eq.OutElastic).Play();
 
             hideAnimation = LayoutRoot.Fade(1, 200, Eq.OutSine)
                 .ThenDo(_ => Dispatcher.BeginInvoke(new Action(() => { SearchTextBox.Focus(); }), System.Windows.Threading.DispatcherPriority.Input))
@@ -56,6 +57,14 @@ namespace QuickJump
             Closed += MainWindow_Closed;
             this.mainViewModel = mainViewModel;
             DataContext = mainViewModel;
+
+            var loadingStarted = refresh
+                .Fade(0).Fade(1, 500)
+                .Rotate(0).Rotate(270, 1500, Eq.OutCubic);
+
+            var loadingEnded = refresh.Fade(1).Fade(0, 500);
+            mainViewModel.LoadingStarted += () => Dispatcher.BeginInvoke(() => loadingStarted.Play());
+            mainViewModel.LoadingEnded += () => Dispatcher.BeginInvoke(() => loadingEnded.Play());
         }
 
         private void MainWindow_Closed(object sender, EventArgs e)

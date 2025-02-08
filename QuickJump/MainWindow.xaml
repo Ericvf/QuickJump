@@ -191,14 +191,12 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-
-
             <Border   BorderThickness="0, 0, 0, 1"
                 Margin="20,10, 20, 0"
                 BorderBrush="LightGray">
+                <Grid>
 
-                <TextBox Name="SearchTextBox"
-                    Grid.Row="0"
+                    <TextBox Name="SearchTextBox"
                     Height="50"
                     Margin="0,0,0,10"
                     FontSize="28" VerticalContentAlignment="Center"
@@ -206,14 +204,23 @@
                     Background="Transparent"
                     Text="{Binding FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     PreviewKeyDown="SearchTextBox_PreviewKeyDown"
-                />
-
+                >
+                    </TextBox>
+                </Grid>
             </Border>
 
-               <!--Visibility="{Binding HasFilteredItems, Converter={StaticResource BoolToVisibilityConverter}}"-->
+
+            <!--Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"-->
+            <Image Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="20"
+                   Source="/Resources/refresh.png" Stretch="UniformToFill" Width="24" Height="24"
+                   x:Name="refresh" RenderTransformOrigin="0.5,0.5"
+              />
+
+
+            <!--Visibility="{Binding HasFilteredItems, Converter={StaticResource BoolToVisibilityConverter}}"-->
             <Image Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20" x:Name="logo"
                 Source="/Resources/QuickJump.png" Stretch="None"></Image>
-            
+
             <ListBox Name="ItemsListBox"
                 Grid.Row="1"
                 ScrollViewer.CanContentScroll="True"
@@ -268,20 +275,16 @@
                 </ListBox.ItemContainerStyle>
 
             </ListBox>
-            
-            <TextBlock Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="20"
-             Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
-             >Loading ...</TextBlock>
-
-            <!--<TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20"
-               Visibility="{Binding HasFilteredItems, Converter={StaticResource InvertedBoolToVisibilityConverter}}"
-               >No items could be found that match your query, please refine your inputs</TextBlock>-->
 
 
             <StackPanel Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="3" Orientation="Horizontal">
-                <TextBlock Foreground="White">QuickJump v1.0</TextBlock>
-                <TextBlock Foreground="Red" Text="{Binding ItemsCount}" />
-                <TextBlock Foreground="Orange" Text="{Binding FilteredItemsCount}" />
+                <TextBlock>
+                    <Run Foreground="White">QuickJump v1.0 - </Run>
+                    <Run Foreground="White" Text="Showing " />
+                    <Run Foreground="Orange" Text="{Binding FilteredItemsCount}" />
+                    <Run Foreground="White" Text=" of " />
+                    <Run Foreground="Orange" Text="{Binding ItemsCount}" />
+                </TextBlock>
             </StackPanel>
         </Grid>
     </Border>

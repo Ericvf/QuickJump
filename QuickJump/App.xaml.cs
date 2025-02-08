@@ -16,7 +16,7 @@ namespace QuickJump
             var serviceProvider = BuildServiceProvider();
             var mainWindow = serviceProvider.GetRequiredService<MainWindow>();
 
-            _ = serviceProvider.GetRequiredService<TaskbarIcon>();
+            //_ = serviceProvider.GetRequiredService<TaskbarIcon>();
 
             var mainViewModel = serviceProvider.GetRequiredService<MainViewModel>();
             mainWindow.Activate();

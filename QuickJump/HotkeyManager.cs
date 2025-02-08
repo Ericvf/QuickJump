@@ -48,7 +48,7 @@ namespace QuickJump
         {
             switch (msg)
             {
-                case WM_SYSKEYDOWN:
+                //case WM_SYSKEYDOWN:
                 case WM_SYSKEYUP:
                 case WM_SYSCHAR:
                     handled = true;

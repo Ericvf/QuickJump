@@ -23,6 +23,8 @@ namespace QuickJump.ViewModels
 
         public ICollectionView FilteredItems { get; }
 
+        public event Action LoadingStarted;
+        public event Action LoadingEnded;
         private bool isLoading;
         public bool IsLoading
         {
@@ -33,6 +35,15 @@ namespace QuickJump.ViewModels
                 {
                     isLoading = value;
                     OnPropertyChanged(nameof(IsLoading));
+
+                    if (isLoading)
+                    {
+                        LoadingStarted?.Invoke();
+                    }
+                    else
+                    {
+                        LoadingEnded?.Invoke();
+                    }
                 }
             }
         }

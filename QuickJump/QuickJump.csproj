@@ -16,6 +16,7 @@
 		<Resource Include="Resources\microsoft-azure.png" />
 		<Resource Include="Resources\process-icon.png" />
 		<Resource Include="Resources\QuickJump.png" />
+		<Resource Include="Resources\refresh.png" />
 		<Resource Include="Resources\visual-studio.png" />
 		<Resource Include="Resources\trayicon.ico" />
 	</ItemGroup>
@@ -35,8 +36,5 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\AnimationExtensions\AnimationExtensions.csproj" />
 	</ItemGroup>
-
-
-
 
 </Project>
