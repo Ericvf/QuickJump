@@ -17,7 +17,7 @@ namespace QuickJump
         HotkeyManager hotkeys;
 
         Animation showAnimation, hideAnimation;
-        
+
         private void IsDeactivated()
         {
             isVisiblityToggle = true;
@@ -87,6 +87,7 @@ namespace QuickJump
 
             Dispatcher.BeginInvoke(new Action(() => { SearchTextBox.Focus(); }), System.Windows.Threading.DispatcherPriority.Input);
             Task.Run(() => mainViewModel.StartBackgroundFetching());
+            ItemsListBox.SelectedIndex = 0;
         }
 
         private void hotkeys_Pressed(object sender, PressedEventArgs e)
@@ -188,6 +189,13 @@ namespace QuickJump
                 SearchTextBox.Focus();
                 e.Handled = true;
             }
+        }
+
+        private async void ItemsListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            hotkeys_Pressed(sender, null);
+            await mainViewModel.ExecuteItem();
+            e.Handled = true;
         }
 
         private void ItemsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
