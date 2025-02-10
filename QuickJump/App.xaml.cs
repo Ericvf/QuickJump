@@ -28,7 +28,7 @@ namespace QuickJump
                 => new ServiceCollection()
                     .AddSingleton<ITokenCredentialProvider, TokenCredentialProvider>()
                     .AddSingleton<IItemsProvider, FileSystemSolutionsProvider>(pb => pb
-                        .Value(@"f:\github\")
+                        .Value(@"c:\git\")
                         .Value(@"*.sln")
                     )
                     .AddSingleton<IItemsProvider, AzureManagementProvider>()
