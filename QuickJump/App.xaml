@@ -9,6 +9,7 @@
         <helpers:BoolToVisibilityConverter TrueValue="Visible" FalseValue="Collapsed" x:Key="BoolToVisibilityConverter" />
         <helpers:BoolToVisibilityConverter TrueValue="Collapsed" FalseValue="Visible" x:Key="InvertedBoolToVisibilityConverter" />
         <helpers:CategoryToIconConverter x:Key="CategoryToIconConverter" />
+        <helpers:StringToIconConverter x:Key="StringToIconConverter" />
         <helpers:EmptyToVisibilityConverter x:Key="EmptyToVisibilityConverter"/>
     </Application.Resources>
 </Application>

@@ -234,7 +234,7 @@
                 VirtualizingPanel.IsVirtualizing="True"
                 Background="{x:Null}"
                 Visibility="{Binding HasFilteredItems, Converter={StaticResource BoolToVisibilityConverter}}"
-                Padding="0,0,0,16"
+                Padding="0,0,0,0"
                 Margin="0, 20, 0, 20"
                 BorderThickness="0"
                 ItemsSource="{Binding FilteredItems}"
@@ -251,22 +251,19 @@
                                 <ColumnDefinition Width="32"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-
                             <Grid.RowDefinitions>
                                 <RowDefinition />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-
-                            <Image Source="{Binding Category, Converter={StaticResource CategoryToIconConverter}}"  Grid.RowSpan="2" 
- VerticalAlignment="Top" />
+                            <Image Source="{Binding Icon, Converter={StaticResource StringToIconConverter}}"  Grid.RowSpan="2" VerticalAlignment="Top" HorizontalAlignment="Center" />
                             <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" FontSize="20" Margin="5,0,0,0"/>
-                            <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Description}" FontSize="14" TextWrapping="Wrap" Margin="5,0,0,0"/>
+                            <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Description}" FontSize="14" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="5,0,0,0"/>
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
-                        <Setter Property="Padding" Value="20,10"/>
+                        <Setter Property="Padding" Value="10,10"/>
                         <Setter Property="Margin" Value="0,0"/>
                         <Setter Property="Background" Value="Transparent"/>
                         <Setter Property="BorderThickness" Value="0"/>
@@ -327,6 +324,58 @@
                         </Setter>
                     </Style>
                 </ListBox.ItemContainerStyle>
+
+                <!--<ListBoxItem>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="32"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Image Source="/Resources/azure-devops.png"  Grid.RowSpan="2" VerticalAlignment="Top" />
+                        <TextBlock Grid.Column="1" Grid.Row="0" Text="\{Binding Name}" FontSize="20" Margin="5,0,0,0"/>
+                        <TextBlock Grid.Column="1" Grid.Row="1" Text="\{Binding Description}" FontSize="14" TextWrapping="Wrap" Margin="5,0,0,0"/>
+                    </Grid>
+                </ListBoxItem>
+                <ListBoxItem IsSelected="True">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="32"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Image Source="/Resources/microsoft-azure.png"  Grid.RowSpan="2" 
+VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Grid.Row="0" Text="\{Binding Name}" FontSize="20" Margin="5,0,0,0"/>
+                        <TextBlock Grid.Column="1" Grid.Row="1" Text="\{Binding Description}" FontSize="14" TextWrapping="Wrap" Margin="5,0,0,0"/>
+                    </Grid>
+                </ListBoxItem>
+                <ListBoxItem IsSelected="False">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="32"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Image Source="/Resources/visual-studio.png"  Grid.RowSpan="2" 
+VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Grid.Row="0" Text="\{Binding Name}" FontSize="20" Margin="5,0,0,0"/>
+                        <TextBlock Grid.Column="1" Grid.Row="1" Text="\{Binding Description}" FontSize="14" TextWrapping="Wrap" Margin="5,0,0,0"/>
+                    </Grid>
+                </ListBoxItem>-->
             </ListBox>
 
 

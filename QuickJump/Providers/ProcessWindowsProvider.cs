@@ -27,6 +27,7 @@ namespace QuickJump.Providers
                         Description = $"{process.Id} {process.ProcessName} {process.MainWindowTitle} proc",
                         Id = process.MainWindowHandle.ToString(),
                         Type = Types.ProcessId,
+                        Icon = "process",
                         Path = process.MainWindowHandle.ToString()
                     };
 

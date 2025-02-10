@@ -1,11 +1,10 @@
-﻿using DependencyInjection.Extensions.Parameterization;
-using Hardcodet.Wpf.TaskbarNotification;
+﻿using System;
+using System.Drawing;
+using System.Windows;
+using DependencyInjection.Extensions.Parameterization;
 using Microsoft.Extensions.DependencyInjection;
 using QuickJump.Providers;
 using QuickJump.ViewModels;
-using System;
-using System.Drawing;
-using System.Windows;
 
 namespace QuickJump
 {
@@ -37,12 +36,6 @@ namespace QuickJump
                     .AddSingleton<MainViewModel>()
                     .AddSingleton<MainWindow>()
                     .AddSingleton<IItemLauncher, ItemLauncher>()
-                    .AddSingleton(provider =>
-                       new TaskbarIcon
-                       {
-                           Icon = new Icon(GetResourceStream(new Uri("pack://application:,,,/QuickJump;component/Resources/trayicon.ico")).Stream),
-                           ToolTipText = "QuickJump",
-                       })
                     .BuildServiceProvider();
     }
 }

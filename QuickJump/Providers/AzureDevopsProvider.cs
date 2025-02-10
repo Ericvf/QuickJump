@@ -66,6 +66,7 @@ namespace QuickJump.Providers
                 Path = $"https://dev.azure.com/raboweb/SDBI/_git/{resource.Name}",
                 Category = Categories.AzureDevOps,
                 Provider = Name,
+                Icon = "azuredevops"
             };
         }
 
@@ -80,6 +81,7 @@ namespace QuickJump.Providers
                 Path = $"https://dev.azure.com/raboweb/SDBI/_build?definitionId={resource.Id}",
                 Category = Categories.AzureDevOps,
                 Provider = Name,
+                Icon = "azuredevops"
             };
         }
     }

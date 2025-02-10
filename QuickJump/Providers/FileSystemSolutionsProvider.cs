@@ -49,6 +49,8 @@ namespace QuickJump.Providers
                 Type = Types.File,
                 Category = Categories.Solution,
                 Provider = Name,
+                Icon = "visualstudio",
+
             };
         }
 

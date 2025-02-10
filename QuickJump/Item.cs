@@ -15,6 +15,8 @@
         public Categories Category { get; set; }
 
         public string Provider { get; set; }
+
+        public string Icon { get; set; }
     }
 
     public enum Types
