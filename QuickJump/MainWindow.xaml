@@ -255,7 +255,7 @@
                                 <RowDefinition />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-                            <Image Source="{Binding Icon, Converter={StaticResource StringToIconConverter}}"  Grid.RowSpan="2" VerticalAlignment="Top" HorizontalAlignment="Center" />
+                            <Image Source="{Binding Icon, Converter={StaticResource StringToIconConverter}}"  Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" />
                             <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" FontSize="20" Margin="5,0,0,0"/>
                             <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Description}" FontSize="14" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="5,0,0,0"/>
                         </Grid>

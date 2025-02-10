@@ -255,7 +255,7 @@ namespace QuickJump.ViewModels
             if (SelectedItem != null)
             {
                 await itemLauncher.LaunchItem(SelectedItem);
-                
+
             }
         }
 

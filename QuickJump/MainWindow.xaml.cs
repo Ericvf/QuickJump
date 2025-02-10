@@ -121,10 +121,10 @@ namespace QuickJump
         {
             if (e.Key == Key.Down)
             {
-                if (ItemsListBox.Items.Count > 0)
+                if (ItemsListBox.Items.Count > 0 && ItemsListBox.SelectedIndex != null)
                 {
-                    ItemsListBox.SelectedIndex = 0;
-                    ItemsListBox.ScrollIntoView(ItemsListBox.Items[0]);
+                    //ItemsListBox.SelectedIndex = 0;
+                    //ItemsListBox.ScrollIntoView(ItemsListBox.Items[0]);
                     ItemsListBox.UpdateLayout();
                     var item = (ListBoxItem)ItemsListBox.ItemContainerGenerator.ContainerFromIndex(ItemsListBox.SelectedIndex);
                     item.Focus();
