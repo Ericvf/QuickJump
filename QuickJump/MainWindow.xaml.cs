@@ -23,7 +23,8 @@ namespace QuickJump
             isVisiblityToggle = true;
             hideAnimation?.Stop();
             showAnimation = LayoutRoot
-                .Fade(0, 100, Eq.OutSine)
+                .Fade(0, 300, Eq.OutSine)
+                .Scale(0.50, 0.50, 200, Eq.InBack)
                 .ThenDo(d => Hide())
             .Play();
         }
@@ -41,6 +42,7 @@ namespace QuickJump
                 .Move(0, 0, 1000, Eq.OutElastic).Play();
 
             hideAnimation = LayoutRoot.Fade(1, 200, Eq.OutSine)
+                .Scale(1, 1, 200, Eq.OutBack)
                 .ThenDo(_ => Dispatcher.BeginInvoke(new Action(() => { SearchTextBox.Focus(); }), System.Windows.Threading.DispatcherPriority.Input))
                 .Play();
         }

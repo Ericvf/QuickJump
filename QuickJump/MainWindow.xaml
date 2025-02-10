@@ -172,7 +172,8 @@
 
     </Window.Resources>
 
-    <Border CornerRadius="5" VerticalAlignment="Top"  BorderBrush="LightGray" BorderThickness="1" Margin="5" x:Name="LayoutRoot" >
+    <Border CornerRadius="5" VerticalAlignment="Top"  BorderBrush="LightGray" BorderThickness="1" Margin="5" x:Name="LayoutRoot" 
+            RenderTransformOrigin="0.5,0.5">
         <Border.Background>
             <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
                 <GradientStop Color="#FFFFFF" Offset="0.0"/>
