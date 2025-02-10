@@ -218,7 +218,7 @@
 
             <!--Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"-->
             <Image Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="20"
-                   Source="/Resources/refresh.png" Stretch="UniformToFill" Width="24" Height="24"
+                   Source="/Resources/refresh.png" Stretch="UniformToFill" Width="24" Height="24" 
                    x:Name="refresh" RenderTransformOrigin="0.5,0.5"
               />
 
