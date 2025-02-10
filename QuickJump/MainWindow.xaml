@@ -9,7 +9,7 @@
         Focusable="False" Topmost="True" ShowInTaskbar="True" ShowActivated="False"
         WindowStartupLocation="CenterScreen"
         FocusManager.FocusedElement="{Binding ElementName=SearchTextBox}"
-        Title="MainWindow" SizeToContent="Height" Width="800" Icon="/Resources/icon.ico" >
+        Title="MainWindow" SizeToContent="Height" Width="850" Icon="/Resources/icon.ico" >
     <Window.Resources>
         <SolidColorBrush x:Key="StandardBorderBrush" Color="#888" />
         <SolidColorBrush x:Key="StandardBackgroundBrush" Color="Black" />
@@ -172,7 +172,7 @@
 
     </Window.Resources>
 
-    <Border CornerRadius="5" VerticalAlignment="Top"  BorderBrush="LightGray" BorderThickness="1" Margin="5" x:Name="LayoutRoot" 
+    <Border CornerRadius="5" VerticalAlignment="Top"  BorderBrush="LightGray" BorderThickness="1" Margin="25" x:Name="LayoutRoot" 
             RenderTransformOrigin="0.5,0.5">
         <Border.Background>
             <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
