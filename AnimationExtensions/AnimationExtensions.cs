@@ -101,8 +101,8 @@ namespace AnimationExtensions
 
             if (instances == 0)
             {
-                GC.WaitForPendingFinalizers();
-                GC.Collect();
+                //GC.WaitForPendingFinalizers();
+                //GC.Collect();
 
                 RaiseStop();
             }
@@ -2054,6 +2054,13 @@ namespace AnimationExtensions
         {
             element.Opacity = 0;
         }
+
+
+        public static void Show(this FrameworkElement element)
+        {
+            element.Opacity = 1;
+        }
+
 
         public static void SetMove(this FrameworkElement element, double x = 0, double y = 0)
         {

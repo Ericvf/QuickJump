@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 
 namespace QuickJump
 {
@@ -19,7 +20,7 @@ namespace QuickJump
         {
             InitializeComponent();
 
-            LayoutRoot.Opacity = 0;
+            LayoutRoot.Hide();
 
             Loaded += MainWindow_Loaded;
             Activated += (s, e) => this.IsActivated();
@@ -36,26 +37,35 @@ namespace QuickJump
                 .Rotate(0).Rotate(270, 1500, Eq.OutCubic);
 
             var loadingEnded = refresh.Fade(1).Fade(0, 500);
-            
+
             mainViewModel.LoadingStarted += () => Dispatcher.BeginInvoke(() => loadingStarted.Play());
             mainViewModel.LoadingEnded += () => Dispatcher.BeginInvoke(() => loadingEnded.Play());
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            TrayIconHelper.AddTrayIcon(new WindowInteropHelper(this).Handle, "QuickJump v1.0 - appbyfex");
+
             hotkeys = new HotkeyManager(this);
             hotkeys.Register(0, ModifierKeys.Alt, Key.Q);
             hotkeys.Pressed += ToggleVisibility;
+            hotkeys.IconClicked += Hotkeys_IconClicked;
 
             Dispatcher.BeginInvoke(new Action(() => { SearchTextBox.Focus(); }), System.Windows.Threading.DispatcherPriority.Input);
             Task.Run(() => mainViewModel.StartBackgroundFetching());
             ItemsListBox.SelectedIndex = 0;
         }
-        
-        private void MainWindow_Deactivated(object sender, EventArgs e)
+
+        private void Hotkeys_IconClicked(object sender, ButtonEventArgs e)
         {
-            Hide();
-            isVisiblityToggle = true;
+            if (e.IsRight)
+            {
+                IsActivated();
+            }
+            else
+            {
+                IsActivated();
+            }
         }
 
         private void MainWindow_MouseDown(object sender, MouseButtonEventArgs e)
@@ -224,6 +234,5 @@ namespace QuickJump
 
             mainViewModel.LoadData(true);
         }
-
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
@@ -25,6 +27,7 @@ namespace QuickJump
         private List<int> ids;
 
         public event EventHandler<PressedEventArgs> Pressed;
+        public event EventHandler<ButtonEventArgs> IconClicked;
 
         public HotkeyManager(Window window)
         {
@@ -43,10 +46,28 @@ namespace QuickJump
         private const int WM_SYSKEYUP = 0x0105;
         private const int WM_SYSCHAR = 0x0106;
 
+        private const int WM_USER = 0x0400;
+        private const int WM_LBUTTONDOWN = 0x0201;
+        private const int WM_RBUTTONDOWN = 0x0204;
+
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             switch (msg)
             {
+                case WM_USER + 1:
+                    switch ((int)lParam)
+                    {
+                        case WM_LBUTTONDOWN:
+                            IconClicked?.Invoke(this, new ButtonEventArgs(false));
+                            handled = true;
+                            break;
+                        case WM_RBUTTONDOWN:
+                            Debug.WriteLine("right click");
+                            IconClicked?.Invoke(this, new ButtonEventArgs(true));
+                            handled = true;
+                            break;
+                    }
+                    break;
                 //case WM_SYSKEYDOWN:
                 case WM_SYSKEYUP:
                 case WM_SYSCHAR:
@@ -54,12 +75,7 @@ namespace QuickJump
                     return IntPtr.Zero;
                 case WM_HOTKEY:
                     {
-                        EventHandler<PressedEventArgs> handler = Pressed;
-                        if (handler != null)
-                        {
-                            handler(this, new PressedEventArgs((int)wParam));
-                        }
-
+                        Pressed?.Invoke(this, new PressedEventArgs((int)wParam));
                         handled = true;
                         break;
                     }
@@ -122,6 +138,15 @@ namespace QuickJump
         }
     }
 
+    class ButtonEventArgs : EventArgs
+    {
+        public bool IsRight { get; private set; }
+
+        public ButtonEventArgs(bool isRight)
+        {
+            IsRight = isRight;
+        }
+    }
     class HotkeyAlreadyRegisteredException : Exception
     {
         public ModifierKeys Modifiers { get; private set; }
