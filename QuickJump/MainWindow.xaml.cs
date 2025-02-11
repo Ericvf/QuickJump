@@ -1,12 +1,10 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading;
+﻿using AnimationExtensions;
+using QuickJump.ViewModels;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using AnimationExtensions;
-using QuickJump.ViewModels;
 
 namespace QuickJump
 {
@@ -14,49 +12,22 @@ namespace QuickJump
     {
         private readonly MainViewModel mainViewModel;
         private bool isVisiblityToggle = false;
-        HotkeyManager hotkeys;
-
-        Animation showAnimation, hideAnimation;
-
-        private void IsDeactivated()
-        {
-            isVisiblityToggle = true;
-            hideAnimation?.Stop();
-            showAnimation = LayoutRoot
-                .Fade(0, 250, Eq.OutSine)
-                .Scale(0.50, 0.50, 200, Eq.InBack)
-                .ThenDo(d => Hide())
-            .Play();
-        }
-
-        private void IsActivated()
-        {
-            LayoutRoot.Opacity = 0;
-            logo.Opacity = 1;
-
-            showAnimation?.Stop();
-            mainViewModel.LoadData(true);
-
-            logo.Move(0, -200).Fade(0)
-                .Fade(0.20, 500, Eq.OutSine)
-                .Move(0, 0, 1000, Eq.OutElastic).Play();
-
-            hideAnimation = LayoutRoot.Fade(1, 200, Eq.OutSine)
-                .Scale(1, 1, 200, Eq.OutBack)
-                .ThenDo(_ => Dispatcher.BeginInvoke(new Action(() => { SearchTextBox.Focus(); }), System.Windows.Threading.DispatcherPriority.Input))
-                .Play();
-        }
+        private Animation showAnimation, hideAnimation;
+        private HotkeyManager hotkeys;
 
         public MainWindow(MainViewModel mainViewModel)
         {
             InitializeComponent();
+
             LayoutRoot.Opacity = 0;
 
             Loaded += MainWindow_Loaded;
+            Activated += (s, e) => this.IsActivated();
+            Deactivated += (s, e) => this.IsDeactivated();
             KeyDown += MainWindow_KeyDown;
-            this.Activated += (s, e) => this.IsActivated();
-            this.Deactivated += (s, e) => this.IsDeactivated();
+            MouseDown += MainWindow_MouseDown;
             Closed += MainWindow_Closed;
+
             this.mainViewModel = mainViewModel;
             DataContext = mainViewModel;
 
@@ -65,58 +36,48 @@ namespace QuickJump
                 .Rotate(0).Rotate(270, 1500, Eq.OutCubic);
 
             var loadingEnded = refresh.Fade(1).Fade(0, 500);
+            
             mainViewModel.LoadingStarted += () => Dispatcher.BeginInvoke(() => loadingStarted.Play());
             mainViewModel.LoadingEnded += () => Dispatcher.BeginInvoke(() => loadingEnded.Play());
-        }
-
-        private void MainWindow_Closed(object sender, EventArgs e)
-        {
-            mainViewModel.Cancel();
-            hotkeys.Unregister(0);
-        }
-
-        private void MainWindow_Deactivated(object sender, EventArgs e)
-        {
-            Hide();
-            isVisiblityToggle = true;
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             hotkeys = new HotkeyManager(this);
             hotkeys.Register(0, ModifierKeys.Alt, Key.Q);
-            hotkeys.Pressed += hotkeys_Pressed;
+            hotkeys.Pressed += ToggleVisibility;
 
             Dispatcher.BeginInvoke(new Action(() => { SearchTextBox.Focus(); }), System.Windows.Threading.DispatcherPriority.Input);
             Task.Run(() => mainViewModel.StartBackgroundFetching());
             ItemsListBox.SelectedIndex = 0;
         }
-
-        private void hotkeys_Pressed(object sender, PressedEventArgs e)
+        
+        private void MainWindow_Deactivated(object sender, EventArgs e)
         {
-            if (isVisiblityToggle)
-            {
-                isVisiblityToggle = !isVisiblityToggle;
-                LayoutRoot.Opacity = 0;
-                Show();
-                SearchTextBox.Focus();
-                SearchTextBox.SelectAll();
-                Activate();
-            }
-            else
-            {
-                isVisiblityToggle = !isVisiblityToggle;
-                IsDeactivated();
-            }
+            Hide();
+            isVisiblityToggle = true;
+        }
 
+        private void MainWindow_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                this.DragMove();
+            }
         }
 
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
             {
-                hotkeys_Pressed(sender, null);
+                ToggleVisibility(sender, null);
             }
+        }
+
+        private void MainWindow_Closed(object sender, EventArgs e)
+        {
+            mainViewModel.Cancel();
+            hotkeys.Unregister(0);
         }
 
         private async void SearchTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -171,7 +132,7 @@ namespace QuickJump
                     ItemsListBox.UpdateLayout();
                 }
 
-                hotkeys_Pressed(sender, null);
+                ToggleVisibility(sender, null);
                 await mainViewModel.ExecuteItem();
                 e.Handled = true;
             }
@@ -181,14 +142,14 @@ namespace QuickJump
         {
             if (e.Key == Key.Escape)
             {
-                hotkeys_Pressed(sender, null);
+                ToggleVisibility(sender, null);
                 e.Handled = true;
                 return;
             }
 
             if (e.Key == Key.Enter)
             {
-                hotkeys_Pressed(sender, null);
+                ToggleVisibility(sender, null);
                 await mainViewModel.ExecuteItem();
                 e.Handled = true;
 
@@ -202,7 +163,7 @@ namespace QuickJump
 
         private async void ItemsListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            hotkeys_Pressed(sender, null);
+            ToggleVisibility(sender, null);
             await mainViewModel.ExecuteItem();
             e.Handled = true;
         }
@@ -214,5 +175,55 @@ namespace QuickJump
                 ItemsListBox.SelectedIndex = 0;
             }
         }
+
+        private void ToggleVisibility(object sender, PressedEventArgs e)
+        {
+            isVisiblityToggle = !isVisiblityToggle;
+            if (!isVisiblityToggle)
+            {
+                IsActivated();
+            }
+            else
+            {
+                IsDeactivated();
+            }
+        }
+
+        private void IsDeactivated()
+        {
+            isVisiblityToggle = true;
+            hideAnimation?.Stop();
+            showAnimation?.Stop();
+            showAnimation = LayoutRoot
+                .Fade(0, 300, Eq.OutSine)
+                .Scale(0.50, 0.50, 200, Eq.InBack)
+                .ThenDo(d => Hide())
+            .Play();
+        }
+
+        private void IsActivated()
+        {
+            Show();
+            Activate();
+            SearchTextBox.Focus();
+            SearchTextBox.SelectAll();
+
+            isVisiblityToggle = false;
+
+            showAnimation?.Stop();
+            hideAnimation?.Stop();
+
+            hideAnimation = LayoutRoot.Fade(0).Fade(1, 200, Eq.OutSine)
+                .Scale(1, 1, 200, Eq.OutBack)
+                .ThenDo(_ => Dispatcher.BeginInvoke(new Action(() => { SearchTextBox.Focus(); }), System.Windows.Threading.DispatcherPriority.Input))
+                .Play();
+
+            logo.Move(0, -200).Fade(0)
+                .Fade(0.20, 500, Eq.OutSine)
+                .Move(0, 0, 1000, Eq.OutElastic).Play();
+
+            mainViewModel.LoadData(true);
+        }
+
     }
 }

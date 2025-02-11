@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuickJump.Providers;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -9,7 +10,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Threading;
-using QuickJump.Providers;
 
 namespace QuickJump.ViewModels
 {
@@ -255,7 +255,6 @@ namespace QuickJump.ViewModels
             if (SelectedItem != null)
             {
                 await itemLauncher.LaunchItem(SelectedItem);
-
             }
         }
 
@@ -263,6 +262,5 @@ namespace QuickJump.ViewModels
         {
             cancellationTokenSource.Cancel();
         }
-
     }
 }
