@@ -23,7 +23,7 @@ namespace QuickJump
             isVisiblityToggle = true;
             hideAnimation?.Stop();
             showAnimation = LayoutRoot
-                .Fade(0, 300, Eq.OutSine)
+                .Fade(0, 250, Eq.OutSine)
                 .Scale(0.50, 0.50, 200, Eq.InBack)
                 .ThenDo(d => Hide())
             .Play();
@@ -130,7 +130,10 @@ namespace QuickJump
                     //ItemsListBox.ScrollIntoView(ItemsListBox.Items[0]);
                     ItemsListBox.UpdateLayout();
                     var item = (ListBoxItem)ItemsListBox.ItemContainerGenerator.ContainerFromIndex(index);
-                    item.Focus();
+                    if (item != null)
+                    {
+                        item.Focus();
+                    }
                 }
 
                 e.Handled = true;
@@ -143,7 +146,10 @@ namespace QuickJump
                     ItemsListBox.ScrollIntoView(ItemsListBox.Items[ItemsListBox.Items.Count - 1]);
                     ItemsListBox.UpdateLayout();
                     var item = (ListBoxItem)ItemsListBox.ItemContainerGenerator.ContainerFromIndex(ItemsListBox.SelectedIndex);
-                    item.Focus();
+                    if (item != null)
+                    {
+                        item.Focus();
+                    }
                 }
 
                 e.Handled = true;

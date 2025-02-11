@@ -172,33 +172,35 @@
 
     </Window.Resources>
 
-    <Border CornerRadius="5" VerticalAlignment="Top"  BorderBrush="LightGray" BorderThickness="1" Margin="25" x:Name="LayoutRoot" 
-            RenderTransformOrigin="0.5,0.5">
-        <Border.Background>
-            <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
-                <GradientStop Color="#FFFFFF" Offset="0.0"/>
-                <GradientStop Color="#F1F1F1" Offset="0.6"/>
-                <GradientStop Color="#E1E1E1" Offset="1.0"/>
-            </RadialGradientBrush>
-        </Border.Background>
+    <Border>
         <Border.Effect>
-            <DropShadowEffect BlurRadius="5"
+            <DropShadowEffect BlurRadius="8"
                 ShadowDepth="0"
-                Color="LightGray"
+                Color="#aaa"
                 />
         </Border.Effect>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+        <Border CornerRadius="5" VerticalAlignment="Top"  BorderBrush="LightGray" BorderThickness="1" Margin="25" x:Name="LayoutRoot" ClipToBounds="True"
+            RenderTransformOrigin="0.5,0.5">
+            <Border.Background>
+                <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                    <GradientStop Color="#FFFFFF" Offset="0.0"/>
+                    <GradientStop Color="#F1F1F1" Offset="0.6"/>
+                    <GradientStop Color="#E1E1E1" Offset="1.0"/>
+                </RadialGradientBrush>
+            </Border.Background>
 
-            <Border   BorderThickness="0, 0, 0, 1"
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Border   BorderThickness="0, 0, 0, 1"
                 Margin="20,10, 20, 0"
                 BorderBrush="LightGray">
-                <Grid>
+                    <Grid>
 
-                    <TextBox Name="SearchTextBox"
+                        <TextBox Name="SearchTextBox"
                     Height="50"
                     Margin="0,0,0,10"
                     FontSize="28" VerticalContentAlignment="Center"
@@ -207,28 +209,28 @@
                     Text="{Binding FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     PreviewKeyDown="SearchTextBox_PreviewKeyDown"
                     >
-                        <TextBox.Style>
-                            <Style TargetType="TextBox">
-                                <Setter Property="CaretBrush" Value="DarkGray"/>
-                            </Style>
-                        </TextBox.Style>
-                    </TextBox>
-                </Grid>
-            </Border>
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="CaretBrush" Value="DarkGray"/>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                    </Grid>
+                </Border>
 
 
-            <!--Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"-->
-            <Image Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="20"
+                <!--Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"-->
+                <Image Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="20"
                    Source="/Resources/refresh.png" Stretch="UniformToFill" Width="24" Height="24" 
                    x:Name="refresh" RenderTransformOrigin="0.5,0.5"
               />
 
 
-            <!--Visibility="{Binding HasFilteredItems, Converter={StaticResource BoolToVisibilityConverter}}"-->
-            <Image Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20" x:Name="logo"
+                <!--Visibility="{Binding HasFilteredItems, Converter={StaticResource BoolToVisibilityConverter}}"-->
+                <Image Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20" x:Name="logo"
                 Source="/Resources/QuickJump.png" Stretch="None"></Image>
 
-            <ListBox Name="ItemsListBox"
+                <ListBox Name="ItemsListBox"
                 Grid.Row="1"
                 ScrollViewer.CanContentScroll="True"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -245,88 +247,88 @@
                 FocusVisualStyle="{x:Null}"
                 MaxHeight="300"
                 PreviewKeyDown="ItemsListBox_PreviewKeyDown">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="32"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Image Source="{Binding Icon, Converter={StaticResource StringToIconConverter}}"  Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                            <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" FontSize="20" Margin="5,0,0,0"/>
-                            <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Description}" FontSize="14" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="5,0,0,0"/>
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="Padding" Value="10,10"/>
-                        <Setter Property="Margin" Value="0,0"/>
-                        <Setter Property="Background" Value="Transparent"/>
-                        <Setter Property="BorderThickness" Value="0"/>
-                        <Setter Property="BorderBrush" Value="Transparent"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ListBoxItem">
-                                    <Border x:Name="Border" 
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="32"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Image Source="{Binding Icon, Converter={StaticResource StringToIconConverter}}"  Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" FontSize="20" Margin="5,0,0,0"/>
+                                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Description}" FontSize="14" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="5,0,0,0"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="10,10"/>
+                            <Setter Property="Margin" Value="0,0"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border x:Name="Border" 
                                         Background="{TemplateBinding Background}" 
                                         BorderBrush="Transparent" 
                                         BorderThickness="0"
                                         Padding="{TemplateBinding Padding}">
-                                        <ContentPresenter />
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Border" Property="Background">
-                                                <Setter.Value>
-                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                        <GradientStop Color="#99D0D0D0" Offset="0.0"/>
-                                                        <GradientStop Color="#66B0B0B0" Offset="0.4"/>
-                                                        <GradientStop Color="#33808080" Offset="1.0"/>
-                                                    </LinearGradientBrush>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Trigger>
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter TargetName="Border" Property="Background">
-                                                <Setter.Value>
-                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                        <GradientStop Color="#99D0ECFF" Offset="0.0"/>
-                                                        <GradientStop Color="#66B0D8FF" Offset="0.4"/>
-                                                        <GradientStop Color="#33A0C8FF" Offset="1.0"/>
-                                                    </LinearGradientBrush>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Trigger>
-                                        <MultiTrigger>
-                                            <MultiTrigger.Conditions>
-                                                <Condition Property="IsSelected" Value="True"/>
-                                                <Condition Property="IsKeyboardFocusWithin" Value="False"/>
-                                            </MultiTrigger.Conditions>
-                                            <Setter TargetName="Border" Property="Background">
-                                                <Setter.Value>
-                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                        <GradientStop Color="#99D0D0D0" Offset="0.0"/>
-                                                        <GradientStop Color="#66B0B0B0" Offset="0.4"/>
-                                                        <GradientStop Color="#33808080" Offset="1.0"/>
-                                                    </LinearGradientBrush>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </MultiTrigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListBox.ItemContainerStyle>
+                                            <ContentPresenter />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Border" Property="Background">
+                                                    <Setter.Value>
+                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                            <GradientStop Color="#99D0D0D0" Offset="0.0"/>
+                                                            <GradientStop Color="#66B0B0B0" Offset="0.4"/>
+                                                            <GradientStop Color="#33808080" Offset="1.0"/>
+                                                        </LinearGradientBrush>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Border" Property="Background">
+                                                    <Setter.Value>
+                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                            <GradientStop Color="#99D0ECFF" Offset="0.0"/>
+                                                            <GradientStop Color="#66B0D8FF" Offset="0.4"/>
+                                                            <GradientStop Color="#33A0C8FF" Offset="1.0"/>
+                                                        </LinearGradientBrush>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Trigger>
+                                            <MultiTrigger>
+                                                <MultiTrigger.Conditions>
+                                                    <Condition Property="IsSelected" Value="True"/>
+                                                    <Condition Property="IsKeyboardFocusWithin" Value="False"/>
+                                                </MultiTrigger.Conditions>
+                                                <Setter TargetName="Border" Property="Background">
+                                                    <Setter.Value>
+                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                            <GradientStop Color="#99D0D0D0" Offset="0.0"/>
+                                                            <GradientStop Color="#66B0B0B0" Offset="0.4"/>
+                                                            <GradientStop Color="#33808080" Offset="1.0"/>
+                                                        </LinearGradientBrush>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </MultiTrigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
 
-                <!--<ListBoxItem>
+                    <!--<ListBoxItem>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="32"/>
@@ -377,19 +379,19 @@ VerticalAlignment="Top" HorizontalAlignment="Center"/>
                         <TextBlock Grid.Column="1" Grid.Row="1" Text="\{Binding Description}" FontSize="14" TextWrapping="Wrap" Margin="5,0,0,0"/>
                     </Grid>
                 </ListBoxItem>-->
-            </ListBox>
+                </ListBox>
 
 
-            <StackPanel Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="3" Orientation="Horizontal">
-                <TextBlock>
+                <StackPanel Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="3" Orientation="Horizontal">
+                    <TextBlock>
                     <Run Foreground="White">QuickJump v1.0 - </Run>
                     <Run Foreground="White" Text="Showing " />
                     <Run Foreground="Orange" Text="{Binding FilteredItemsCount}" />
                     <Run Foreground="White" Text=" of " />
                     <Run Foreground="Orange" Text="{Binding ItemsCount}" />
-                </TextBlock>
-            </StackPanel>
-        </Grid>
+                    </TextBlock>
+                </StackPanel>
+            </Grid>
+        </Border>
     </Border>
-
 </Window>
