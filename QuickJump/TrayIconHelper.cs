@@ -11,7 +11,7 @@ namespace QuickJump
         private const int NIF_ICON = 0x00000002;
         private const int NIF_TIP = 0x00000004;
         private const int WM_USER = 0x0400;
-        private const int IDI_APPLICATION = 0x8001;
+        private const int IDI_APPLICATION = 0x7F00;
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         private struct NOTIFYICONDATA
