@@ -12,7 +12,7 @@ namespace QuickJump
     public partial class MainWindow : Window
     {
         private readonly MainViewModel mainViewModel;
-        private bool isVisiblityToggle = false;
+        private bool isVisiblityToggle = true;
         private Animation showAnimation, hideAnimation;
         private HotkeyManager hotkeys;
 
@@ -80,7 +80,7 @@ namespace QuickJump
         {
             if (e.Key == Key.Escape)
             {
-                ToggleVisibility(sender, null);
+                IsDeactivated();
             }
         }
 
@@ -152,7 +152,7 @@ namespace QuickJump
         {
             if (e.Key == Key.Escape)
             {
-                ToggleVisibility(sender, null);
+                IsDeactivated();
                 e.Handled = true;
                 return;
             }
@@ -188,8 +188,7 @@ namespace QuickJump
 
         private void ToggleVisibility(object sender, PressedEventArgs e)
         {
-            isVisiblityToggle = !isVisiblityToggle;
-            if (!isVisiblityToggle)
+            if (isVisiblityToggle)
             {
                 IsActivated();
             }
@@ -201,38 +200,44 @@ namespace QuickJump
 
         private void IsDeactivated()
         {
-            isVisiblityToggle = true;
-            hideAnimation?.Stop();
-            showAnimation?.Stop();
-            showAnimation = LayoutRoot
-                .Fade(0, 300, Eq.OutSine)
-                .Scale(0.50, 0.50, 200, Eq.InBack)
-                .ThenDo(d => Hide())
-            .Play();
+            if (!isVisiblityToggle)
+            {
+                isVisiblityToggle = true;
+                hideAnimation?.Stop();
+                showAnimation?.Stop();
+                showAnimation = LayoutRoot
+                    .Fade(0, 300, Eq.OutSine)
+                    .Scale(0.50, 0.50, 200, Eq.InBack)
+                    .ThenDo(d => Hide())
+                .Play();
+            }
         }
 
         private void IsActivated()
         {
-            Show();
-            Activate();
-            SearchTextBox.Focus();
-            SearchTextBox.SelectAll();
+            if (isVisiblityToggle)
+            {
+                isVisiblityToggle = false;
+                Show();
+                Activate();
+                SearchTextBox.Focus();
+                SearchTextBox.SelectAll();
 
-            isVisiblityToggle = false;
 
-            showAnimation?.Stop();
-            hideAnimation?.Stop();
+                showAnimation?.Stop();
+                hideAnimation?.Stop();
 
-            hideAnimation = LayoutRoot.Fade(0).Fade(1, 200, Eq.OutSine)
-                .Scale(1, 1, 200, Eq.OutBack)
-                .ThenDo(_ => Dispatcher.BeginInvoke(new Action(() => { SearchTextBox.Focus(); }), System.Windows.Threading.DispatcherPriority.Input))
-                .Play();
+                hideAnimation = LayoutRoot.Fade(0).Fade(1, 200, Eq.OutSine)
+                    .Scale(1, 1, 200, Eq.OutBack)
+                    .ThenDo(_ => Dispatcher.BeginInvoke(new Action(() => { SearchTextBox.Focus(); }), System.Windows.Threading.DispatcherPriority.Input))
+                    .Play();
 
-            logo.Move(0, -200).Fade(0)
-                .Fade(0.20, 500, Eq.OutSine)
-                .Move(0, 0, 1000, Eq.OutElastic).Play();
+                logo.Move(0, -200).Fade(0)
+                    .Fade(0.20, 500, Eq.OutSine)
+                    .Move(0, 0, 1000, Eq.OutElastic).Play();
 
-            mainViewModel.LoadData(true);
+                mainViewModel.LoadData(true);
+            }
         }
     }
 }
