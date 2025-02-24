@@ -95,10 +95,8 @@ namespace QuickJump
             if (e.Key == Key.Down)
             {
                 var index = ItemsListBox.SelectedIndex;
-                if (ItemsListBox.Items.Count > 0 && index != null)
+                if (ItemsListBox.Items.Count > 0)
                 {
-                    //ItemsListBox.SelectedIndex = 0;
-                    //ItemsListBox.ScrollIntoView(ItemsListBox.Items[0]);
                     ItemsListBox.UpdateLayout();
                     var item = (ListBoxItem)ItemsListBox.ItemContainerGenerator.ContainerFromIndex(index);
                     if (item != null)

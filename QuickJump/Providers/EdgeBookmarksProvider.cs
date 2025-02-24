@@ -36,7 +36,7 @@ namespace QuickJump.Providers
                             Provider = Name,
                             Name = bookmark.Name,
                             Category = Categories.Bookmark,
-                            Description = $"{bookmark.Url} ({profileName})",
+                            Description = $"{bookmark.Name} {bookmark.Url} ({profileName})",
                             Id = $"{profileName}_{bookmark.Name}_{bookmark.Url}",
                             Type = Types.Uri,
                             Icon = "edge",
