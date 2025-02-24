@@ -39,7 +39,6 @@ namespace QuickJump.Providers
         {
             var id = filePath;
             var fileName = Path.GetFileName(filePath);
-            var directoryName = Path.GetDirectoryName(filePath);
 
             return new Item
             {
