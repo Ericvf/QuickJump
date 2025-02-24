@@ -31,6 +31,7 @@
         Azure,
         AzureDevOps,
         Solution,
-        ProcessWindow
+        ProcessWindow,
+        Bookmark
     }
 }

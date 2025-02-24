@@ -11,43 +11,44 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
-	  <PackageReference Include="DependencyInjection.Extensions.Parameterization" Version="1.0.5" />
-		
-	  <PackageReference Include="Azure.Identity" Version="1.13.2" />
-	  <PackageReference Include="Azure.ResourceManager" Version="1.13.0" />
-	  <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="19.225.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
+		<PackageReference Include="DependencyInjection.Extensions.Parameterization" Version="1.0.5" />
+
+		<PackageReference Include="Azure.Identity" Version="1.13.2" />
+		<PackageReference Include="Azure.ResourceManager" Version="1.13.0" />
+		<PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="19.225.1" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\AnimationExtensions\AnimationExtensions.csproj" />
+		<ProjectReference Include="..\AnimationExtensions\AnimationExtensions.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Resource Include="Resources\appservice.png" />
-	  <Resource Include="Resources\azure-devops.png" />
-	  <Resource Include="Resources\azuredevops.png" />
-	  <Resource Include="Resources\azureportal.png" />
-	  <Resource Include="Resources\frontdoor.png" />
-	  <Resource Include="Resources\functionapp.png" />
-	  <Resource Include="Resources\icon.ico" />
-	  <Resource Include="Resources\insights.png" />
-	  <Resource Include="Resources\keyvault.png" />
-	  <Resource Include="Resources\microsoft-azure.png" />
-	  <Resource Include="Resources\networkwatcher.png" />
-	  <Resource Include="Resources\nsg.png" />
-	  <Resource Include="Resources\plan.png" />
-	  <Resource Include="Resources\process-icon.png" />
-	  <Resource Include="Resources\process.png" />
-	  <Resource Include="Resources\QuickJump.png" />
-	  <Resource Include="Resources\refresh.png" />
-	  <Resource Include="Resources\resourcegroup.png" />
-	  <Resource Include="Resources\sqlserver.png" />
-	  <Resource Include="Resources\storage.png" />
-	  <Resource Include="Resources\trayicon.ico" />
-	  <Resource Include="Resources\virtualnetwork.png" />
-	  <Resource Include="Resources\visual-studio.png" />
-	  <Resource Include="Resources\visualstudio.png" />
+		<Resource Include="Resources\appservice.png" />
+		<Resource Include="Resources\azure-devops.png" />
+		<Resource Include="Resources\azuredevops.png" />
+		<Resource Include="Resources\azureportal.png" />
+		<Resource Include="Resources\frontdoor.png" />
+		<Resource Include="Resources\functionapp.png" />
+		<Resource Include="Resources\icon.ico" />
+		<Resource Include="Resources\insights.png" />
+		<Resource Include="Resources\keyvault.png" />
+		<Resource Include="Resources\microsoft-azure.png" />
+		<Resource Include="Resources\networkwatcher.png" />
+		<Resource Include="Resources\nsg.png" />
+		<Resource Include="Resources\plan.png" />
+		<Resource Include="Resources\process-icon.png" />
+		<Resource Include="Resources\process.png" />
+		<Resource Include="Resources\QuickJump.png" />
+		<Resource Include="Resources\refresh.png" />
+		<Resource Include="Resources\resourcegroup.png" />
+		<Resource Include="Resources\sqlserver.png" />
+		<Resource Include="Resources\storage.png" />
+		<Resource Include="Resources\trayicon.ico" />
+		<Resource Include="Resources\virtualnetwork.png" />
+		<Resource Include="Resources\visual-studio.png" />
+		<Resource Include="Resources\visualstudio.png" />
+		<Resource Include="Resources\edge.png" />
 	</ItemGroup>
 
 </Project>

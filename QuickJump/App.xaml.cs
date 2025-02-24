@@ -14,25 +14,21 @@ namespace QuickJump
         {
             var serviceProvider = BuildServiceProvider();
             var mainWindow = serviceProvider.GetRequiredService<MainWindow>();
-
-            //_ = serviceProvider.GetRequiredService<TaskbarIcon>();
-
-            var mainViewModel = serviceProvider.GetRequiredService<MainViewModel>();
             mainWindow.Activate();
             mainWindow.Show();
         }
-
 
         private ServiceProvider BuildServiceProvider()
                 => new ServiceCollection()
                     .AddSingleton<ITokenCredentialProvider, TokenCredentialProvider>()
                     .AddSingleton<IItemsProvider, FileSystemSolutionsProvider>(pb => pb
-                        .Value(@"f:\github\")
+                        .Value(@"c:\git\")
                         .Value(@"*.sln")
                     )
                     .AddSingleton<IItemsProvider, AzureManagementProvider>()
                     .AddSingleton<IItemsProvider, AzureDevopsProvider>()
                     .AddSingleton<IItemsProvider, ProcessWindowsProvider>()
+                    .AddSingleton<IItemsProvider, EdgeBookmarksProvider>()
                     .AddSingleton<MainViewModel>()
                     .AddSingleton<MainWindow>()
                     .AddSingleton<IItemLauncher, ItemLauncher>()

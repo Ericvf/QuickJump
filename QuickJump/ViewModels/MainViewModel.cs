@@ -165,7 +165,12 @@ namespace QuickJump.ViewModels
                     {
                         Debug.WriteLine($"Started: {itemsProvider.Name}");
                         var stopwatch = Stopwatch.StartNew();
-                        var existingItemsMap = items.ToArray().Where(i => i.Provider == itemsProvider.Name).ToDictionary(i => i.Id);
+                        var existingItemsMap = items
+                            .ToArray()
+                            .Where(i => i.Provider == itemsProvider.Name)
+                            .GroupBy(i => i.Id)
+                            .ToDictionary(g => g.Key, g => g.First());
+
                         var fetchedNames = new HashSet<string>();
                         var addedNames = new HashSet<string>();
 
