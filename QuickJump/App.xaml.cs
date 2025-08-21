@@ -1,6 +1,4 @@
-﻿using System;
-using System.Drawing;
-using System.Windows;
+﻿using System.Windows;
 using DependencyInjection.Extensions.Parameterization;
 using Microsoft.Extensions.DependencyInjection;
 using QuickJump.Providers;

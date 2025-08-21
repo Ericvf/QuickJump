@@ -8,6 +8,7 @@
 		<SelfContained>false</SelfContained>
 		<PublishReadyToRun>true</PublishReadyToRun>
 		<ApplicationIcon>Resources\icon.ico</ApplicationIcon>
+		<Nullable>Enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>

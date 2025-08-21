@@ -26,7 +26,8 @@ namespace QuickJump.Providers
         {
             var subscriptions = armClient.GetSubscriptions();
             foreach (var subscription in subscriptions
-                .Where(s => s.Data.DisplayName.Contains("cfoportal", System.StringComparison.OrdinalIgnoreCase))
+                .Where(s => s.Data.DisplayName.Contains("cfoportal", StringComparison.OrdinalIgnoreCase)
+                    || s.Data.DisplayName.Contains("poseidon", StringComparison.OrdinalIgnoreCase))
             )
             {
                 foreach (var resourceGroup in subscription.GetResourceGroups())

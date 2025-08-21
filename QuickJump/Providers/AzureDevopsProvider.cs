@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Core;
@@ -33,9 +34,8 @@ namespace QuickJump.Providers
             var gitClient = await connection.GetClientAsync<GitHttpClient>();
             var buildClient = await connection.GetClientAsync<BuildHttpClient>();
 
-            var project = await projectClient.GetProject("SDBI");
-            //var projects = await projectClient.GetProjects();
-            //foreach (var project in projects)
+            var projects = await projectClient.GetProjects();
+            foreach (var project in projects.Where(p => p.Name == "SDBI" || p.Name == "Tribe External Reporting"))
             {
                 var repos = await gitClient.GetRepositoriesAsync(project.Id, null, cancellationToken);
                 foreach (var repo in repos)
@@ -63,7 +63,7 @@ namespace QuickJump.Providers
                 Name = resource.Name,
                 Type = Types.Uri,
                 Description = $"{resource.Name} repo",
-                Path = $"https://dev.azure.com/raboweb/SDBI/_git/{resource.Name}",
+                Path = resource.WebUrl,
                 Category = Categories.AzureDevOps,
                 Provider = Name,
                 Icon = "azuredevops"
@@ -72,13 +72,17 @@ namespace QuickJump.Providers
 
         private Item MapPipelineToItem(BuildDefinitionReference resource)
         {
+            var link = resource.Links.Links["web"] is ReferenceLink webLink && webLink.Href != null 
+                    ? webLink.Href
+                    : $"https://dev.azure.com/raboweb/{resource.Project}/_build?definitionId={resource.Id}";
+
             return new Item
             {
                 Id = resource.Id.ToString(),
                 Name = resource.Name,
                 Type = Types.Uri,
                 Description = $"{resource.Name} pipeline",
-                Path = $"https://dev.azure.com/raboweb/SDBI/_build?definitionId={resource.Id}",
+                Path = link,
                 Category = Categories.AzureDevOps,
                 Provider = Name,
                 Icon = "azuredevops"
