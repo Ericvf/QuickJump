@@ -16,7 +16,7 @@ namespace QuickJump
             mainWindow.Show();
         }
 
-        private ServiceProvider BuildServiceProvider()
+        private static ServiceProvider BuildServiceProvider()
                 => new ServiceCollection()
                     .AddSingleton<ITokenCredentialProvider, TokenCredentialProvider>()
                     .AddSingleton<IItemsProvider, FileSystemSolutionsProvider>(pb => pb

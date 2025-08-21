@@ -90,7 +90,7 @@ namespace QuickJump.ViewModels
         }
 
         private string filterText = default;
-        private string[] filterKeywords = new string[0];
+        private string[] filterKeywords = [];
 
         public string FilterText
         {
@@ -125,7 +125,7 @@ namespace QuickJump.ViewModels
         {
             this.itemsProviders = itemsProviders;
             this.itemLauncher = itemLauncher;
-            items = new ObservableCollection<Item>();
+            items = [];
             FilteredItems = CollectionViewSource.GetDefaultView(items);
             FilteredItems.Filter = FilterItems;
         }
@@ -232,9 +232,9 @@ namespace QuickJump.ViewModels
                 var itemField = item.Description ?? item.Name;
                 foreach (var keyword in filterKeywords)
                 {
-                    if (keyword.StartsWith("!"))
+                    if (keyword.StartsWith('!'))
                     {
-                        var negatedKeyword = keyword.Substring(1);
+                        var negatedKeyword = keyword[1..];
                         if (negatedKeyword.Length > 0 && itemField.Contains(negatedKeyword, StringComparison.OrdinalIgnoreCase))
                         {
                             return false;

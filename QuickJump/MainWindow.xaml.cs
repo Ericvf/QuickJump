@@ -99,10 +99,7 @@ namespace QuickJump
                 {
                     ItemsListBox.UpdateLayout();
                     var item = (ListBoxItem)ItemsListBox.ItemContainerGenerator.ContainerFromIndex(index);
-                    if (item != null)
-                    {
-                        item.Focus();
-                    }
+                    item?.Focus();
                 }
 
                 e.Handled = true;
@@ -112,13 +109,10 @@ namespace QuickJump
                 if (ItemsListBox.Items.Count > 0)
                 {
                     ItemsListBox.SelectedIndex = ItemsListBox.Items.Count - 1;
-                    ItemsListBox.ScrollIntoView(ItemsListBox.Items[ItemsListBox.Items.Count - 1]);
+                    ItemsListBox.ScrollIntoView(ItemsListBox.Items[^1]);
                     ItemsListBox.UpdateLayout();
                     var item = (ListBoxItem)ItemsListBox.ItemContainerGenerator.ContainerFromIndex(ItemsListBox.SelectedIndex);
-                    if (item != null)
-                    {
-                        item.Focus();
-                    }
+                    item?.Focus();
                 }
 
                 e.Handled = true;

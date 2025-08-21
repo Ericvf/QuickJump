@@ -30,14 +30,14 @@ namespace QuickJump.Providers
             var token = await tokenCredential.GetTokenAsync(new TokenRequestContext(["499b84ac-1321-427f-aa17-267ca6975798/.default"]), default);
             var connection = new VssConnection(new Uri(organizationUrl), new VssBasicCredential(string.Empty, token.Token));
 
-            var projectClient = await connection.GetClientAsync<ProjectHttpClient>();
-            var gitClient = await connection.GetClientAsync<GitHttpClient>();
-            var buildClient = await connection.GetClientAsync<BuildHttpClient>();
+            var projectClient = await connection.GetClientAsync<ProjectHttpClient>(cancellationToken);
+            var gitClient = await connection.GetClientAsync<GitHttpClient>(cancellationToken);
+            var buildClient = await connection.GetClientAsync<BuildHttpClient>(cancellationToken);
 
             var projects = await projectClient.GetProjects();
             foreach (var project in projects.Where(p => p.Name == "SDBI" || p.Name == "Tribe External Reporting"))
             {
-                var repos = await gitClient.GetRepositoriesAsync(project.Id, null, cancellationToken);
+                var repos = await gitClient.GetRepositoriesAsync(project.Id, cancellationToken: cancellationToken);
                 foreach (var repo in repos)
                 {
                     var item = MapRepoToItem(repo);

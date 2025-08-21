@@ -42,7 +42,7 @@ namespace AnimationExtensions
                 return dependencyObject;
             }
 
-            DependencyObject parent = null;
+            DependencyObject parent;
 
             parent = LogicalTreeHelper.GetParent(dependencyObject);
             if (parent != null)
@@ -106,17 +106,15 @@ namespace AnimationExtensions
             if (parent == null)
                 return null;
 
-            T foundChild = null;
+            T foundChild;
 
-            List<T> returnValue = new List<T>();
+            List<T> returnValue = [];
 
             int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
             for (int i = 0; i < childrenCount; i++)
             {
                 var child = VisualTreeHelper.GetChild(parent, i);
-                T childType = child as T;
-
-                if (childType == null)
+                if (child is not T childType)
                 {
                     var children = FindChilden<T>(child);
                     returnValue.AddRange(children);
@@ -147,12 +145,11 @@ namespace AnimationExtensions
         public static T FindParent<T>(this DependencyObject childElement, int depth) where T : DependencyObject
         {
             DependencyObject parent = VisualTreeHelper.GetParent(childElement);
-            T parentAsT = parent as T;
             if (parent == null)
             {
                 return null;
             }
-            else if (parentAsT != null)
+            else if (parent is T parentAsT)
             {
                 if (depth == 0)
                 {

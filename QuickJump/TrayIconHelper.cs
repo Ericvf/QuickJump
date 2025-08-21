@@ -48,7 +48,7 @@ namespace QuickJump
             IntPtr hInstance = GetModuleHandle(null); 
             var myIcon = LoadIcon(hInstance, IDI_APPLICATION);
 
-            NOTIFYICONDATA nid = new NOTIFYICONDATA
+            NOTIFYICONDATA nid = new()
             {
                 cbSize = Marshal.SizeOf(typeof(NOTIFYICONDATA)),
                 hWnd = windowHandle,
@@ -64,7 +64,7 @@ namespace QuickJump
 
         public static void RemoveTrayIcon(IntPtr windowHandle)
         {
-            NOTIFYICONDATA nid = new NOTIFYICONDATA
+            NOTIFYICONDATA nid = new()
             {
                 cbSize = Marshal.SizeOf(typeof(NOTIFYICONDATA)),
                 hWnd = windowHandle,

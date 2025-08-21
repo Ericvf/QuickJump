@@ -75,7 +75,7 @@ namespace QuickJump.Providers
             };
         }
 
-        private string MapIcon(ResourceType resourceType)
+        private static string MapIcon(ResourceType resourceType)
         {
             switch (resourceType.Type)
             {

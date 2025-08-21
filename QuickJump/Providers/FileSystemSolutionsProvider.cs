@@ -24,7 +24,7 @@ namespace QuickJump.Providers
 
         public async Task GetItems(Func<Item, Task> value, CancellationToken cancellationToken)
         {
-            await Task.Delay(250);
+            await Task.Delay(250, cancellationToken);
 
             var allFiles = SafeWalk(Directory.EnumerateFiles(filePath, filePattern, SearchOption.AllDirectories));
 
@@ -56,7 +56,7 @@ namespace QuickJump.Providers
         private static IEnumerable<T> SafeWalk<T>(IEnumerable<T> source)
         {
             var enumerator = source.GetEnumerator();
-            bool? hasCurrent = null;
+            bool? hasCurrent;
 
             do
             {

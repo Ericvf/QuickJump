@@ -26,7 +26,7 @@ namespace QuickJump.Providers
                 {
                     using var fileStream = File.OpenRead(edgeBookmarksPath);
 
-                    var bookmarksData = await JsonNode.ParseAsync(fileStream);
+                    var bookmarksData = await JsonNode.ParseAsync(fileStream, cancellationToken: cancellationToken);
                     var bookmarks = ExtractBookmarks(bookmarksData["roots"]["bookmark_bar"]);
 
                     foreach (var bookmark in bookmarks)
