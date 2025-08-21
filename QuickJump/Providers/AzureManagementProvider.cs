@@ -11,11 +11,14 @@ namespace QuickJump.Providers
     public class AzureManagementProvider : IItemsProvider
     {
         private readonly ArmClient armClient;
+        private readonly string[]? subscriptionFilters;
 
-        public AzureManagementProvider(ITokenCredentialProvider tokenCredentialProvider)
+        public AzureManagementProvider(ITokenCredentialProvider tokenCredentialProvider, string[]? subscriptionFilters = null)
         {
             var tokenCredential = tokenCredentialProvider.GetCredential();
             armClient = new ArmClient(tokenCredential);
+
+            this.subscriptionFilters = subscriptionFilters;
         }
 
         public string Name => nameof(AzureManagementProvider);
@@ -25,10 +28,8 @@ namespace QuickJump.Providers
         public async Task GetItems(Func<Item, Task> value, CancellationToken cancellationToken)
         {
             var subscriptions = armClient.GetSubscriptions();
-            foreach (var subscription in subscriptions
-                .Where(s => s.Data.DisplayName.Contains("cfoportal", StringComparison.OrdinalIgnoreCase)
-                    || s.Data.DisplayName.Contains("poseidon", StringComparison.OrdinalIgnoreCase))
-            )
+            var filteredSubscriptions = subscriptions.Where(s => subscriptionFilters?.Any(f => s.Data.DisplayName.Contains(f)) ?? true);
+            foreach (var subscription in filteredSubscriptions)
             {
                 foreach (var resourceGroup in subscription.GetResourceGroups())
                 {

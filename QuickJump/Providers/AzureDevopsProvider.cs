@@ -15,10 +15,12 @@ namespace QuickJump.Providers
     {
         private const string organizationUrl = "https://dev.azure.com/Raboweb";
         private readonly TokenCredential tokenCredential;
+        private readonly string[]? projectFilters;
 
-        public AzureDevopsProvider(ITokenCredentialProvider tokenCredentialProvider)
+        public AzureDevopsProvider(ITokenCredentialProvider tokenCredentialProvider, string[]? projectFilters = null)
         {
             tokenCredential = tokenCredentialProvider.GetCredential();
+            this.projectFilters = projectFilters ?? [];
         }
 
         public string Name => nameof(AzureDevopsProvider);
@@ -35,7 +37,9 @@ namespace QuickJump.Providers
             var buildClient = await connection.GetClientAsync<BuildHttpClient>(cancellationToken);
 
             var projects = await projectClient.GetProjects();
-            foreach (var project in projects.Where(p => p.Name == "SDBI" || p.Name == "Tribe External Reporting"))
+            var filteredProjects = projects.Where(p => projectFilters?.Contains(p.Name, StringComparer.OrdinalIgnoreCase) ?? true);
+
+            foreach (var project in filteredProjects)
             {
                 var repos = await gitClient.GetRepositoriesAsync(project.Id, cancellationToken: cancellationToken);
                 foreach (var repo in repos)

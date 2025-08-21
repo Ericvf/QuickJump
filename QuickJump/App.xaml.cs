@@ -23,8 +23,12 @@ namespace QuickJump
                         .Value(@"c:\git\")
                         .Value(@"*.sln")
                     )
-                    .AddSingleton<IItemsProvider, AzureManagementProvider>()
-                    .AddSingleton<IItemsProvider, AzureDevopsProvider>()
+                    .AddSingleton<IItemsProvider, AzureManagementProvider>(pb => pb
+                        .Value(new[] { "cfoportal", "poseidon" })
+                    )
+                    .AddSingleton<IItemsProvider, AzureDevopsProvider>(pb => pb
+                        .Value(new[] { "SDBI", "Tribe External Reporting" })
+                    )
                     .AddSingleton<IItemsProvider, ProcessWindowsProvider>()
                     .AddSingleton<IItemsProvider, EdgeBookmarksProvider>()
                     .AddSingleton<MainViewModel>()
