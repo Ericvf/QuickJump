@@ -8,12 +8,26 @@ namespace QuickJump
 {
     public partial class App : Application
     {
+        private MainViewModel? mainViewModel;
+
         protected override void OnStartup(StartupEventArgs e)
         {
             var serviceProvider = BuildServiceProvider();
             var mainWindow = serviceProvider.GetRequiredService<MainWindow>();
+            mainViewModel = serviceProvider.GetRequiredService<MainViewModel>();
+            mainViewModel.LoadItemsFromCache();
+
             mainWindow.Activate();
             mainWindow.Show();
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            if (mainViewModel != null)
+            {
+                mainViewModel.SaveItemsToCache();
+            }
+            base.OnExit(e);
         }
 
         private static ServiceProvider BuildServiceProvider()

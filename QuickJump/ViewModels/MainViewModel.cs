@@ -1,15 +1,18 @@
-﻿using QuickJump.Providers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Threading;
+using Microsoft.VisualStudio.Services.Common;
+using QuickJump.Providers;
 
 namespace QuickJump.ViewModels
 {
@@ -19,6 +22,7 @@ namespace QuickJump.ViewModels
         private readonly ObservableCollection<Item> items;
         private readonly IEnumerable<IItemsProvider> itemsProviders;
         private readonly IItemLauncher itemLauncher;
+        private readonly string appDataPath;
 
         public ICollectionView FilteredItems { get; }
 
@@ -108,6 +112,7 @@ namespace QuickJump.ViewModels
         }
 
         private Item selectedItem;
+
         public Item SelectedItem
         {
             get => selectedItem;
@@ -128,6 +133,11 @@ namespace QuickJump.ViewModels
             items = [];
             FilteredItems = CollectionViewSource.GetDefaultView(items);
             FilteredItems.Filter = FilterItems;
+
+            appDataPath = Path.Combine(
+                  Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                  "QuickJump"
+              );
         }
 
         public void UpdateView()
@@ -160,63 +170,85 @@ namespace QuickJump.ViewModels
                 await Task.WhenAll(itemsProviders
                     .Where(i => !isOnActivate || i.LoadDataOnActivate)
                     .Select(async itemsProvider =>
-                {
-                    try
                     {
-                        Debug.WriteLine($"Started: {itemsProvider.Name}");
-                        var stopwatch = Stopwatch.StartNew();
-                        var existingItemsMap = items
-                            .ToArray()
-                            .Where(i => i.Provider == itemsProvider.Name)
-                            .GroupBy(i => i.Id)
-                            .ToDictionary(g => g.Key, g => g.First());
-
-                        var fetchedNames = new HashSet<string>();
-                        var addedNames = new HashSet<string>();
-
-                        await itemsProvider.GetItems(async item =>
+                        try
                         {
-                            fetchedNames.Add(item.Id);
+                            Debug.WriteLine($"Started: {itemsProvider.Name}");
+                            var stopwatch = Stopwatch.StartNew();
+                            var existingItemsMap = items
+                                .ToArray()
+                                .Where(i => i.Provider == itemsProvider.Name)
+                                .GroupBy(i => i.Id)
+                                .ToDictionary(g => g.Key, g => g.First());
 
-                            if (existingItemsMap.TryGetValue(item.Id, out var existingItem))
-                            {
-                                existingItem.Name = item.Name;
-                            }
-                            else
-                            {
-                                addedNames.Add(item.Id);
+                            var fetchedNames = new HashSet<string>();
+                            var addedNames = new HashSet<string>();
 
-                                await Application.Current.Dispatcher.InvokeAsync(() =>
+                            await itemsProvider.GetItems(async item =>
+                            {
+                                fetchedNames.Add(item.Id);
+
+                                if (existingItemsMap.TryGetValue(item.Id, out var existingItem))
                                 {
-                                    items.Add(item);
-                                    UpdateView();
-                                }, DispatcherPriority.Normal, cancellationTokenSource.Token);
-                            }
-                        }, cancellationTokenSource.Token);
-
-                        await Application.Current.Dispatcher.InvokeAsync(() =>
-                        {
-                            for (int i = existingItemsMap.Keys.Count - 1; i >= 0; i--)
-                            {
-                                var existingItem = existingItemsMap[existingItemsMap.Keys.ElementAt(i)];
-                                if (!fetchedNames.Contains(existingItem.Id))
-                                {
-                                    items.Remove(existingItem);
+                                    existingItem.Name = item.Name;
                                 }
-                            }
+                                else
+                                {
+                                    addedNames.Add(item.Id);
 
-                            UpdateView();
-                        }, DispatcherPriority.Normal, cancellationTokenSource.Token);
+                                    await Application.Current.Dispatcher.InvokeAsync(() =>
+                                    {
+                                        items.Add(item);
+                                        UpdateView();
+                                    }, DispatcherPriority.Normal, cancellationTokenSource.Token);
+                                }
+                            }, cancellationTokenSource.Token);
 
-                        Debug.WriteLine($"Done: {itemsProvider.Name}, {stopwatch.ElapsedMilliseconds}");
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"Exception: {ex?.Message.ToString()}");
-                    }
-                }));
+                            await Application.Current.Dispatcher.InvokeAsync(() =>
+                            {
+                                for (int i = existingItemsMap.Keys.Count - 1; i >= 0; i--)
+                                {
+                                    var existingItem = existingItemsMap[existingItemsMap.Keys.ElementAt(i)];
+                                    if (!fetchedNames.Contains(existingItem.Id))
+                                    {
+                                        items.Remove(existingItem);
+                                    }
+                                }
+
+                                UpdateView();
+                            }, DispatcherPriority.Normal, cancellationTokenSource.Token);
+
+                            Debug.WriteLine($"Done: {itemsProvider.Name}, {stopwatch.ElapsedMilliseconds}");
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"Exception: {ex?.Message.ToString()}");
+                        }
+                    }));
 
                 IsLoading = false;
+            }
+        }
+
+
+        public void SaveItemsToCache()
+        {
+            Directory.CreateDirectory(appDataPath);
+
+            string filePath = Path.Combine(appDataPath, "itemcache.json");
+            string json = JsonSerializer.Serialize(items.ToArray());
+            File.WriteAllText(filePath, json);
+        }
+
+
+        public void LoadItemsFromCache()
+        {
+            string filePath = Path.Combine(appDataPath, "itemcache.json");
+            if (File.Exists(filePath))
+            {
+                var json = File.ReadAllText(filePath);
+                var cachedItems =  JsonSerializer.Deserialize<Item[]>(json) ?? Enumerable.Empty<Item>();
+                items.AddRange(cachedItems);
             }
         }
 
