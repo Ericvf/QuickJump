@@ -10,6 +10,8 @@ namespace QuickJump.Providers
     {
         public string Name => nameof(StaticItemsProvider);
 
+        public string Key => Name;
+
         public bool LoadDataOnActivate => false;
 
         public async Task GetItems(Func<Item, Task> value, CancellationToken cancellationToken)
@@ -48,7 +50,7 @@ namespace QuickJump.Providers
 
             foreach (var item in x)
             {
-                item.Provider = Name;
+                item.Provider = Key;
                 await value(item);
             }
         }

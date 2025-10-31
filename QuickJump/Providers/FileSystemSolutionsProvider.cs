@@ -14,12 +14,15 @@ namespace QuickJump.Providers
 
         public string Name => nameof(FileSystemSolutionsProvider);
 
+        public string Key { get; set; }
+
         public bool LoadDataOnActivate => false;
 
         public FileSystemSolutionsProvider(string filePath, string filePattern)
         {
             this.filePath = filePath;
             this.filePattern = filePattern;
+            Key = $"{Name}-{filePath}-{filePattern}";
         }
 
         public async Task GetItems(Func<Item, Task> value, CancellationToken cancellationToken)
@@ -47,7 +50,7 @@ namespace QuickJump.Providers
                 Description = id,
                 Type = Types.File,
                 Category = Categories.Solution,
-                Provider = Name,
+                Provider = Key,
                 Icon = "visualstudio",
 
             };

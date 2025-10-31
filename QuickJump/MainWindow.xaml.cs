@@ -194,13 +194,17 @@ namespace QuickJump
         {
             if (!isVisiblityToggle)
             {
-                isVisiblityToggle = true;
                 hideAnimation?.Stop();
                 showAnimation?.Stop();
                 showAnimation = LayoutRoot
                     .Fade(0, 300, Eq.OutSine)
                     .Scale(0.50, 0.50, 200, Eq.InBack)
-                    .ThenDo(d => Hide())
+                    .Wait(100)
+                    .ThenDo(d =>
+                    {
+                        isVisiblityToggle = true;
+                        Hide();
+                    })
                 .Play();
             }
         }

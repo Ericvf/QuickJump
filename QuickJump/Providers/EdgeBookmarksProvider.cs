@@ -12,6 +12,8 @@ namespace QuickJump.Providers
     {
         public string Name => nameof(EdgeBookmarksProvider);
 
+        public string Key => Name;
+
         public bool LoadDataOnActivate => false;
 
         public async Task GetItems(Func<Item, Task> value, CancellationToken cancellationToken)
@@ -33,7 +35,7 @@ namespace QuickJump.Providers
                     {
                         var item = new Item()
                         {
-                            Provider = Name,
+                            Provider = Key,
                             Name = bookmark.Name,
                             Category = Categories.Bookmark,
                             Description = $"{bookmark.Name} {bookmark.Url} ({profileName})",

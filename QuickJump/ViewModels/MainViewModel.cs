@@ -173,11 +173,11 @@ namespace QuickJump.ViewModels
                     {
                         try
                         {
-                            Debug.WriteLine($"Started: {itemsProvider.Name}");
+                            Debug.WriteLine($"Started: {itemsProvider.Key}");
                             var stopwatch = Stopwatch.StartNew();
                             var existingItemsMap = items
                                 .ToArray()
-                                .Where(i => i.Provider == itemsProvider.Name)
+                                .Where(i => i.Provider == itemsProvider.Key)
                                 .GroupBy(i => i.Id)
                                 .ToDictionary(g => g.Key, g => g.First());
 

@@ -10,6 +10,8 @@ namespace QuickJump.Providers
 
         string Name { get; }
 
+        string Key { get; }
+
         bool LoadDataOnActivate { get; }
     }
 }

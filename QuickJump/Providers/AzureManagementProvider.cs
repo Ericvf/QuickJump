@@ -23,6 +23,8 @@ namespace QuickJump.Providers
 
         public string Name => nameof(AzureManagementProvider);
 
+        public string Key => Name;
+
         public bool LoadDataOnActivate => false;
 
         public async Task GetItems(Func<Item, Task> value, CancellationToken cancellationToken)
@@ -57,7 +59,7 @@ namespace QuickJump.Providers
                 Path = $"https://portal.azure.com/#@/resource{resourceGroup.Id}",
                 Category = Categories.Azure,
                 Icon = MapIcon(resourceGroup.Data.ResourceType),
-                Provider = Name,
+                Provider = Key,
             };
         }
 
@@ -72,7 +74,7 @@ namespace QuickJump.Providers
                 Path = $"https://portal.azure.com/#@/resource{resource.Id}",
                 Category = Categories.Azure,
                 Icon = MapIcon(resource.Data.ResourceType),
-                Provider = Name,
+                Provider = Key,
             };
         }
 

@@ -27,6 +27,8 @@ namespace QuickJump.Providers
 
         public bool LoadDataOnActivate => false;
 
+        public string Key => Name;
+
         public async Task GetItems(Func<Item, Task> value, CancellationToken cancellationToken)
         {
             var token = await tokenCredential.GetTokenAsync(new TokenRequestContext(["499b84ac-1321-427f-aa17-267ca6975798/.default"]), default);
@@ -69,7 +71,7 @@ namespace QuickJump.Providers
                 Description = $"{resource.Name} repo",
                 Path = resource.WebUrl,
                 Category = Categories.AzureDevOps,
-                Provider = Name,
+                Provider = Key,
                 Icon = "azuredevops"
             };
         }
@@ -88,7 +90,7 @@ namespace QuickJump.Providers
                 Description = $"{resource.Name} pipeline",
                 Path = link,
                 Category = Categories.AzureDevOps,
-                Provider = Name,
+                Provider = Key,
                 Icon = "azuredevops"
             };
         }

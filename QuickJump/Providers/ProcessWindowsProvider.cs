@@ -9,6 +9,8 @@ namespace QuickJump.Providers
     {
         public string Name => nameof(ProcessWindowsProvider);
 
+        public string Key => Name;
+
         public bool LoadDataOnActivate => true;
 
         public async Task GetItems(Func<Item, Task> value, CancellationToken cancellationToken)
@@ -21,7 +23,7 @@ namespace QuickJump.Providers
                 {
                     var item = new Item()
                     {
-                        Provider = Name,
+                        Provider = Key,
                         Name = process.MainWindowTitle,
                         Category = Categories.ProcessWindow,
                         Description = $"{process.Id} {process.ProcessName} {process.MainWindowTitle} proc",
